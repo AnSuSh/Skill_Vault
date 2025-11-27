@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -29,7 +30,8 @@ import com.quickthought.skillvault.ui.theme.SkillVaultTheme
 fun CredentialItem(
     credential: CredentialItemUI,
     onClick: () -> Unit,
-    onCopyClick: () -> Unit
+    onCopyClick: () -> Unit,
+    onDeleteClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -74,6 +76,14 @@ fun CredentialItem(
                     tint = MaterialTheme.colorScheme.secondary
                 )
             }
+
+            IconButton(onClick = onDeleteClick) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete",
+                    tint = MaterialTheme.colorScheme.error // Make it red!
+                )
+            }
         }
     }
 }
@@ -89,7 +99,8 @@ private fun CredentialItemPreview() {
                 username = "user@gmail.com",
             ),
             onClick = {},
-            onCopyClick = {}
+            onCopyClick = {},
+            onDeleteClick = {}
         )
     }
 }

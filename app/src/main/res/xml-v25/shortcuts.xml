@@ -1,0 +1,14 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="add_credential"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_menu_add"
+        android:shortcutShortLabel="@string/add_new"
+        android:shortcutLongLabel="@string/add_new_credential">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.quickthought.skillvault"
+            android:targetClass="com.quickthought.skillvault.MainActivity" />
+        <extra android:key="shortcut_action" android:value="add_new" />
+    </shortcut>
+</shortcuts>

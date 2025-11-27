@@ -6,16 +6,22 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -27,36 +33,45 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.quickthought.skillvault.domain.model.CredentialItemUI
 import com.quickthought.skillvault.ui.addedit.AddEditContract.UiEvent
 import com.quickthought.skillvault.ui.addedit.AddEditContract.ViewAction
+import com.quickthought.skillvault.ui.widgets.DeleteConfirmationDialog
+import com.quickthought.skillvault.util.PasswordGenerator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditCredentialSheet(
     onDismiss: () -> Unit,
-    initialCredentialId: Int? = null, // Passed from the list screen for edit mode
+    initialCredential: CredentialItemUI? = null, // Passed from the list screen for edit mode
     viewModel: AddEditViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    var passwordVisible by remember { mutableStateOf(false) }
+
     // Initialize the ViewModel with data if in edit mode
-    LaunchedEffect(initialCredentialId) {
-        viewModel.processAction(
-            ViewAction.Initialize(
-                credential = null // This should be handled by retrieving the full model in a proper flow,
-                // but for a simple V1, the ViewModel could fetch it if ID is present.
-                // For now, assume a complex navigation flow passes the model, or the VM fetches it.
-                // For simplicity here, we assume the list screen handles the "edit" flow state.
-            )
-        )
+    LaunchedEffect(initialCredential) {
+        if (initialCredential == null) {
+            // If we are opening the sheet for a new item (Add mode), reset the state
+            viewModel.processAction(ViewAction.ResetState)
+        } else {
+            // If we are editing, initialize with data
+            viewModel.processAction(ViewAction.Initialize(initialCredential))
+        }
     }
 
     // Handle one-time events
@@ -73,7 +88,8 @@ fun AddEditCredentialSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 24.dp)
+                .padding(horizontal = 16.dp)
+                .navigationBarsPadding()
         ) {
             // Sheet Title
             Text(
@@ -85,6 +101,11 @@ fun AddEditCredentialSheet(
             // Input Fields
             OutlinedTextField(
                 value = state.accountName,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Text,
+                    autoCorrectEnabled = true,
+                ),
                 onValueChange = { viewModel.processAction(ViewAction.AccountNameChanged(it)) },
                 label = { Text("Account Name (e.g., Google, Bank)") },
                 modifier = Modifier.fillMaxWidth()
@@ -93,19 +114,51 @@ fun AddEditCredentialSheet(
 
             OutlinedTextField(
                 value = state.username,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Email,
+                    autoCorrectEnabled = true,
+                ),
                 onValueChange = { viewModel.processAction(ViewAction.UsernameChanged(it)) },
                 label = { Text("Username / Email") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
-                value = state.password,
-                onValueChange = { viewModel.processAction(ViewAction.PasswordChanged(it)) },
-                label = { Text("Password (Required for New/Change)") },
-                visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth()
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                OutlinedTextField(
+                    value = state.password,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done,
+                        keyboardType = KeyboardType.Password,
+                    ),
+                    onValueChange = { viewModel.processAction(ViewAction.PasswordChanged(it)) },
+                    label = { Text("Password *") },
+                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        val image =
+                            if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                        val description = if (passwordVisible) "Hide password" else "Show password"
+
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            Icon(imageVector = image, contentDescription = description)
+                        }
+                    },
+                    modifier = Modifier.weight(9f)
+                )
+                IconButton(
+                    onClick = {
+                        viewModel.processAction(ViewAction.GeneratePassword())
+                    }, colors = IconButtonDefaults.iconButtonColors(
+                        contentColor = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(Icons.Default.Refresh, contentDescription = "Generate Password")
+                }
+            }
             Spacer(modifier = Modifier.height(24.dp))
 
             // Action Buttons
@@ -141,21 +194,9 @@ fun AddEditCredentialSheet(
 
             // Delete Confirmation Dialog
             if (state.showDeleteConfirmation) {
-                AlertDialog(
-                    onDismissRequest = { /* Do nothing on dismiss, force choice */ },
-                    confirmButton = {
-                        TextButton(onClick = { viewModel.processAction(ViewAction.ConfirmDelete) }) {
-                            Text("Confirm Delete", color = MaterialTheme.colorScheme.error)
-                        }
-                    },
-                    dismissButton = {
-//                        TextButton(onClick = {
-//                            viewModel.processAction(ViewAction.DeleteTapped) {
-//                            Text("Cancel")
-//                        }
-                    },
-                    title = { Text("Confirm Deletion") },
-                    text = { Text("Are you sure you want to delete this credential?") }
+                DeleteConfirmationDialog(
+                    onConfirm = { viewModel.processAction(ViewAction.ConfirmDelete) },
+                    onDismiss = { viewModel.processAction(ViewAction.DeleteCancelled) }
                 )
             }
         }

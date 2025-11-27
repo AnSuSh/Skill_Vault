@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -23,6 +24,12 @@ fun LoadingState() {
     }
 }
 
+@Preview
+@Composable
+fun LoadingStatePreview() {
+    LoadingState()
+}
+
 @Composable
 fun EmptyState(message: String) {
     Column(
@@ -32,9 +39,9 @@ fun EmptyState(message: String) {
     ) {
         Text(
             text = "🔒", // Use a relevant emoji or icon
-            style = MaterialTheme.typography.headlineLarge
+            style = MaterialTheme.typography.displayMedium
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = message,
             style = MaterialTheme.typography.bodyLarge,
@@ -42,4 +49,10 @@ fun EmptyState(message: String) {
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
+}
+
+@Preview
+@Composable
+fun EmptyStatePreview() {
+    EmptyState(message = "No credentials found.")
 }

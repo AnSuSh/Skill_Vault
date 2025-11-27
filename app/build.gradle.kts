@@ -1,9 +1,18 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
+}
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("local.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
@@ -24,13 +33,32 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            // Use the properties if they exist, otherwise use null
+            storeFile = keystoreProperties["RELEASE_STORE_FILE"]?.let { file(it as String) }
+            storePassword = keystoreProperties["RELEASE_STORE_PASSWORD"] as String?
+            keyAlias = keystoreProperties["RELEASE_KEY_ALIAS"] as String?
+            keyPassword = keystoreProperties["RELEASE_KEY_PASSWORD"] as String?
+        }
+    }
+
     buildTypes {
-        release {
+        debug{
             isMinifyEnabled = false
+            isDebuggable = true
+            isDefault = true
+            versionNameSuffix = "-debug"
+        }
+        release {
+            isMinifyEnabled = true
+            isDebuggable = false
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
@@ -58,6 +86,7 @@ dependencies {
 
     implementation(libs.coroutines.android)
     implementation(libs.security.crypto)
+    implementation(libs.androidx.splashscreen)
     implementation(libs.biometric)
 
     implementation(libs.androidx.core.ktx)
@@ -80,9 +109,10 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidTest.compose.junit4)
     testImplementation(libs.test.coroutines)
+    testImplementation(libs.test.mockk.default)
     testImplementation(libs.test.mockk.agent)
     testImplementation(libs.test.mockk.android)
-
+    testImplementation(libs.test.cash.turbine)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)

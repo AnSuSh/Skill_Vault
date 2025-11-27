@@ -12,7 +12,11 @@ class CredentialListContract {
      */
     sealed class UiState {
         // Data class holding the success state and list of credentials
-        data class Success(val credentials: List<CredentialItemUI>) : UiState()
+        data class Success(
+            val credentials: List<CredentialItemUI>,
+            val pendingDeleteId: Int? = null, // If not null, the dialog is visible
+            val isDeleting: Boolean = false
+        ) : UiState()
 
         // Object representing the initial loading state
         object Loading : UiState()
@@ -26,8 +30,10 @@ class CredentialListContract {
      */
     sealed class UiEvent {
         data class ShowSnackbar(val message: String) : UiEvent()
+        data class CopyToClipBoard(val password: String) : UiEvent()
         object ShowBiometricPrompt : UiEvent()
-        object NavigateToSettings : UiEvent()
+        object OpenAddSheet : UiEvent()
+//        object NavigateToSettings : UiEvent()
     }
 
     /**
@@ -37,6 +43,9 @@ class CredentialListContract {
         object LoadCredentials : ViewAction()
         data class CopyPasswordClicked(val credentialId: Int) : ViewAction()
         data class CredentialTapped(val credential: CredentialItemUI) : ViewAction()
-        // More actions (Save, Delete, Edit) will go into a separate contract/viewmodel for the Sheet
+        data class SearchQueryChanged(val query: String) : ViewAction()
+        data class DeleteIconClicked(val id: Int) : ViewAction()
+        object ConfirmDelete : ViewAction()
+        object DismissDeleteDialog : ViewAction()
     }
 }

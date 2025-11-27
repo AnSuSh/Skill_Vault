@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">Skill Vault</string>
+    <string name="app_name">Password Vault</string>
+    <string name="add_new">New Credential</string>
+    <string name="add_new_credential">Add New Credential</string>
 </resources>

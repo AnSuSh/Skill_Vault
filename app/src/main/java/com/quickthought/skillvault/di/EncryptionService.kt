@@ -1,7 +1,6 @@
 package com.quickthought.skillvault.di
 
 import java.nio.charset.StandardCharsets
-import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
@@ -23,21 +22,23 @@ class EncryptionService @Inject constructor(private val secretKey: SecretKey) {
      * @return The encrypted data as a Base64 encoded string.
      */
     fun encrypt(plaintext: String): String {
-        // 1. Generate a new Initialization Vector (IV) for each encryption
-        val iv = ByteArray(12) // GCM standard IV size is 12 bytes
-        SecureRandom().nextBytes(iv)
-        val gcmParamSpec = GCMParameterSpec(128, iv) // 128 bit auth tag size
+        // 1. Initialize the cipher for encryption (Let Android generate the IV)
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
 
-        // 2. Initialize the cipher for encryption
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey, gcmParamSpec)
+        // 2. Get the automatically generated IV
+        val iv = cipher.iv
 
         // 3. Encrypt the data
         val encryptedBytes = cipher.doFinal(plaintext.toByteArray(StandardCharsets.UTF_8))
 
-        // 4. Combine IV and encrypted data to store together, then Base64 encode
+        // 4. Combine IV and encrypted data to store together
+        // (We still need to store the IV to decrypt later)
         val combined = iv + encryptedBytes
+
+        // 5. Return as Base64
         return android.util.Base64.encodeToString(combined, android.util.Base64.DEFAULT)
     }
+
 
     /**
      * Decrypts a Base64 encoded string.

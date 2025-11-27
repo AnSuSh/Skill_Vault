@@ -24,11 +24,15 @@ class AddEditContract {
 
     sealed class ViewAction {
         data class Initialize(val credential: CredentialItemUI?) : ViewAction()
+        // To clear the state when the FAB is pressed
+        object ResetState : ViewAction()
         data class AccountNameChanged(val name: String) : ViewAction()
         data class UsernameChanged(val name: String) : ViewAction()
+        data class GeneratePassword(val length: Int = 16) : ViewAction()
         data class PasswordChanged(val password: String) : ViewAction()
         object SaveTapped : ViewAction()
         object DeleteTapped : ViewAction()
+        object DeleteCancelled : ViewAction()
         object ConfirmDelete : ViewAction()
     }
 }

@@ -1,12 +1,15 @@
 package com.quickthought.skillvault.data
 
+import android.util.Log
 import com.quickthought.skillvault.data.local.CredentialDAO
 import com.quickthought.skillvault.di.EncryptionService
 import com.quickthought.skillvault.domain.model.CredentialItemUI
 import com.quickthought.skillvault.domain.model.toDomainModel
 import com.quickthought.skillvault.domain.model.toEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class CredentialRepository @Inject constructor(
@@ -29,6 +32,11 @@ class CredentialRepository @Inject constructor(
      * The sensitive password field is encrypted before being passed to the DAO.
      */
     suspend fun saveCredential(credential: CredentialItemUI, plainTextPassword: String) {
+        /**
+         * Remove the Log.i(...) calls from your CredentialRepository.kt file. A repository's job is to manage data, not to log.
+         * If you need to debug, use the debugger or temporary println statements that you remove later.
+         * */
+//        Log.i("CredentialRepository", "Saving credential: $credential")
         val encryptedPassword = encryptionService.encrypt(plainTextPassword)
         val entity = credential.toEntity(encryptedPassword)
         credentialDao.insertCredential(entity)
@@ -43,15 +51,17 @@ class CredentialRepository @Inject constructor(
         entityToDelete?.let { credentialDao.deleteCredential(it) }
     }
 
-    /**
-     * Retrieves a credential's password and decrypts it for display/copy.
-     * THIS MUST ONLY BE CALLED AFTER BIOMETRIC AUTHENTICATION!
-     */
-    suspend fun getDecryptedPassword(id: Int): String {
-        val entity = credentialDao.getCredentialById(id)
-            ?: throw NoSuchElementException("Credential with ID $id not found.")
+    // In CredentialRepository.kt
+    suspend fun getDecryptedPassword(id: Int): String = withContext(Dispatchers.IO) {
 
-        // Decrypt the password string stored in the database
-        return encryptionService.decrypt(entity.encryptedPassword)
+        // 1. Fetch Encrypted Entity: Suspends while Room retrieves the data.
+        val entity = credentialDao.getCredentialById(id)
+            ?: throw NoSuchElementException("Credential not found.")
+
+        // 2. Decrypt: Uses the EncryptionService with the secure MasterKey-derived key.
+        val encryptedText = entity.encryptedPassword
+
+        // 3. Return Plaintext: This is the string ready for the clipboard.
+        encryptionService.decrypt(encryptedText)
     }
 }
