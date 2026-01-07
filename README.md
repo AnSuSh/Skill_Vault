@@ -12,7 +12,7 @@
 ## 📸 Preview
 | List Screen | Add Credential | Dark Mode |
 | :---: | :---: | :---: |
-| ![List](https://via.placeholder.com/200x400) | ![Add](https://via.placeholder.com/200x400) | ![Dark](https://via.placeholder.com/200x400) |
+| ![List](https://drive.google.com/file/d/1qWbTY1wsjhmxuib4WhkGfOv3MkVbxCr7/view?usp=drive_link) | ![Add](https://drive.google.com/file/d/11UiV0oy-eBvfc7HoJXNm3cDpMO1yV6Hk/view?usp=drive_link) | ![Dark](https://drive.google.com/file/d/1-nwtcboKLv6A91dKHNNrLwaLfaZOeSiV/view?usp=drive_link) |
 
 ---
 
