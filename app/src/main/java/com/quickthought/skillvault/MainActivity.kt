@@ -36,7 +36,10 @@ class MainActivity : FragmentActivity() {
         handleIntent(intent)
 
         // Prevents screenshots and masks the app in the recent apps switcher
-        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        // Only apply the secure flag if the app is NOT in debug mode
+        if (!BuildConfig.DEBUG) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        }
 
         setContent {
             SkillVaultTheme { CredentialListScreen(viewModel) }
