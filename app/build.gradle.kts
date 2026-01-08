@@ -76,40 +76,43 @@ android {
 
 dependencies {
 
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.ui)
-    ksp(libs.hilt.compiler)
-
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    implementation(libs.sql.cipher)
-    ksp(libs.room.compiler)
-
-    implementation(libs.coroutines.android)
-    implementation(libs.security.crypto)
-    implementation(libs.androidx.splashscreen)
-    implementation(libs.biometric)
-
+    implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.lifecycle.viewmodel.compose)
-    implementation(libs.navigation.compose)
-    implementation(libs.hilt.navigation.compose)
-    implementation(libs.androidx.activity.compose)
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons)
-    implementation(libs.androidx.material3)
+    implementation(libs.androidx.activity.compose)
 
-    testImplementation(libs.junit)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation)
+
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.biometric)
+    implementation(libs.androidx.navigation.compose)
+
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    implementation(libs.androidx.security.crypto)
+
+    implementation(libs.net.zetetic.sql.cipher)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidTest.compose.junit4)
-    testImplementation(libs.test.coroutines)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlin.coroutines.test)
     testImplementation(libs.test.mockk.default)
     testImplementation(libs.test.mockk.agent)
     testImplementation(libs.test.mockk.android)
