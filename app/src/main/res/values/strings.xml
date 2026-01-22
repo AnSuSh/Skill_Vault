@@ -2,4 +2,8 @@
     <string name="app_name">Password Vault</string>
     <string name="add_new">New Credential</string>
     <string name="add_new_credential">Add New Credential</string>
+    <string name="button_confirm">Confirm</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="delete_password_alert">Delete Password?</string>
+    <string name="irreversible_action_warning">This action cannot be undone.</string>
 </resources>

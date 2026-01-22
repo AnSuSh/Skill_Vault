@@ -36,12 +36,14 @@ class AddEditViewModel @Inject constructor(
             is ViewAction.UsernameChanged -> _uiState.update { it.copy(username = action.name) }
             is ViewAction.GeneratePassword -> onNewPasswordGenerate(action.length)
             is ViewAction.PasswordChanged -> _uiState.update { it.copy(password = action.password) }
-            ViewAction.SaveTapped -> saveCredential()
+            ViewAction.SaveTapped -> processSaveTapped()
             ViewAction.DeleteTapped -> _uiState.update { it.copy(showDeleteConfirmation = true) }
-            ViewAction.ConfirmDelete -> deleteCredential()
+            ViewAction.DeleteConfirmed -> deleteCredential()
             // Reset the entire state to the default empty state
             ViewAction.ResetState -> _uiState.value = UiState()
             ViewAction.DeleteCancelled -> _uiState.update { it.copy(showDeleteConfirmation = false) }
+            ViewAction.CancelOverwrite -> cancelOverwrite()
+            ViewAction.ConfirmOverwrite -> confirmOverwrite()
         }
     }
 
@@ -63,7 +65,7 @@ class AddEditViewModel @Inject constructor(
         }
     }
 
-    private fun saveCredential() {
+    private fun processSaveTapped() {
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
 
@@ -74,38 +76,61 @@ class AddEditViewModel @Inject constructor(
                 return@launch
             }
 
-            // If in Edit Mode and the password field is blank, we must fetch the old encrypted password
-            // to avoid overwriting it with an empty string.
-            val passwordToEncrypt = if (state.isEditMode && state.password.isBlank()) {
-                // Placeholder: In a perfect world, the Repository would handle this complex update logic
-                // by fetching the existing entity's encrypted password.
-                // For V1 simplicity, we assume the user must re-enter the password to update the item.
-                // We will simplify this and just prevent updating if the password field is blank in Edit Mode.
-                _uiEvent.emit(UiEvent.ShowError("To update, please re-enter or change the password."))
-                _uiState.update { it.copy(isSaving = false) }
-                return@launch
+            if (state.isEditMode) {
+                // An item with this name already exists, show confirmation dialog
+                _uiState.update { it.copy(showOverwriteConfirmation = true) }
             } else {
-                state.password // Use the new password
+                // No existing item, proceed with saving
+                saveCredential()
             }
+        }
+    }
 
-            try {
-                // Create a model with current state (ID is 0 if adding)
-                val credentialToSave = CredentialItemUI(
-                    credentialId = state.credentialId ?: 0,
-                    accountName = state.accountName,
-                    username = state.username
-                )
+    private fun confirmOverwrite() {
+        viewModelScope.launch {
+            // Hide dialog and proceed with saving
+            _uiState.update { it.copy(showOverwriteConfirmation = false) }
+            saveCredential()
+        }
+    }
 
-                Log.i("AddEditViewModel", "Saving credential: $credentialToSave")
-                // Pass the domain model and the plaintext password to the Repository
-                repository.saveCredential(credentialToSave, passwordToEncrypt)
-                _uiEvent.emit(UiEvent.SaveSuccess)
-            } catch (e: Exception) {
-                Log.e("AddEditViewModel", "Error saving credential: ${e.message}")
-                _uiEvent.emit(UiEvent.ShowError("Failed to save: ${e.message}"))
-            } finally {
-                _uiState.update { it.copy(isSaving = false) }
-            }
+    private fun cancelOverwrite() {
+        _uiState.update { it.copy(showOverwriteConfirmation = false) }
+    }
+
+    private suspend fun saveCredential() {
+        val state = _uiState.value
+        // If in Edit Mode and the password field is blank, we must fetch the old encrypted password
+        // to avoid overwriting it with an empty string.
+        val passwordToEncrypt = if (state.isEditMode && state.password.isBlank()) {
+            // Placeholder: In a perfect world, the Repository would handle this complex update logic
+            // by fetching the existing entity's encrypted password.
+            // For V1 simplicity, we assume the user must re-enter the password to update the item.
+            // We will simplify this and just prevent updating if the password field is blank in Edit Mode.
+            _uiEvent.emit(UiEvent.ShowError("To update, please re-enter or change the password."))
+            _uiState.update { it.copy(isSaving = false) }
+            return
+        } else {
+            state.password // Use the new password
+        }
+
+        try {
+            // Create a model with current state (ID is 0 if adding)
+            val credentialToSave = CredentialItemUI(
+                credentialId = state.credentialId ?: 0,
+                accountName = state.accountName,
+                username = state.username
+            )
+
+            Log.i("AddEditViewModel", "Saving credential: $credentialToSave")
+            // Pass the domain model and the plaintext password to the Repository
+            repository.saveCredential(credentialToSave, passwordToEncrypt)
+            _uiEvent.emit(UiEvent.SaveSuccess)
+        } catch (e: Exception) {
+            Log.e("AddEditViewModel", "Error saving credential: ${e.message}")
+            _uiEvent.emit(UiEvent.ShowError("Failed to save: ${e.message}"))
+        } finally {
+            _uiState.update { it.copy(isSaving = false) }
         }
     }
 
