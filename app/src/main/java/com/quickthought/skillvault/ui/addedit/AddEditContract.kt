@@ -13,7 +13,8 @@ class AddEditContract {
         val password: String = "",
         val isSaving: Boolean = false,
         val isEditMode: Boolean = false,
-        val showDeleteConfirmation: Boolean = false
+        val showDeleteConfirmation: Boolean = false,
+        val showOverwriteConfirmation: Boolean = false
     )
 
     sealed class UiEvent {
@@ -33,6 +34,8 @@ class AddEditContract {
         object SaveTapped : ViewAction()
         object DeleteTapped : ViewAction()
         object DeleteCancelled : ViewAction()
-        object ConfirmDelete : ViewAction()
+        object DeleteConfirmed : ViewAction()
+        object ConfirmOverwrite : ViewAction()
+        object CancelOverwrite : ViewAction()
     }
 }

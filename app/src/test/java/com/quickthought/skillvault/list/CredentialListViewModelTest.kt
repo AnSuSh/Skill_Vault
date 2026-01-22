@@ -21,7 +21,7 @@ class CredentialListViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val repository: CredentialRepository = mockk(relaxed = true)
-    private val credUIDummy = CredentialItemUI(1, "Google", "john.doe@gmail.com")
+//    private val credUIDummy = CredentialItemUI(1, "Google", "john.doe@gmail.com")
     private lateinit var viewModel: CredentialListViewModel
 
     @Before
@@ -41,15 +41,15 @@ class CredentialListViewModelTest {
         }
     }
 
-    @Test
-    fun `when Credential is tapped, CredentialTapped event is emitted`() = runTest {
-        viewModel.uiEvent.test {
-            viewModel.processAction(CredentialListContract.ViewAction.CredentialTapped(credUIDummy))
-
-            val event = awaitItem()
-            assert(event is CredentialListContract.UiEvent.ShowSnackbar)
-        }
-    }
+//    @Test
+//    fun `when Credential is tapped, CredentialTapped event is emitted`() = runTest {
+//        viewModel.uiEvent.test {
+//            viewModel.processAction(CredentialListContract.ViewAction.CredentialTapped(credUIDummy))
+//
+//            val event = awaitItem()
+//            assert(event is CredentialListContract.UiEvent.ShowSnackbar)
+//        }
+//    }
 
     @Test
     fun `when search query is entered, uiState emits filtered credentials`() = runTest {

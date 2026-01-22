@@ -19,7 +19,7 @@ class MainActivity : FragmentActivity() {
     private val viewModel: CredentialListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
+        installSplashScreen()
         // Optional: Keep the splash screen on screen longer if you're
         // loading data or checking authentication
         /*

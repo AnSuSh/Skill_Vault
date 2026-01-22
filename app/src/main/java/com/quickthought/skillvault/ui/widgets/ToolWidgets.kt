@@ -1,31 +1,32 @@
 package com.quickthought.skillvault.ui.widgets
 
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.quickthought.skillvault.R
 
 @Composable
-fun DeleteConfirmationDialog(
+fun ConfirmationDialog(
+    title: String,
+    text: String,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
     AlertDialog(
-        onDismissRequest = {
-            // Force user to click cancel button
-        },
+        onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = { onConfirm() }) {
-                Text("Delete", color = MaterialTheme.colorScheme.error)
+                Text(stringResource(R.string.button_confirm))
             }
         },
         dismissButton = {
             TextButton(onClick = { onDismiss() }) {
-                Text("Cancel")
+                Text(stringResource(R.string.button_cancel))
             }
         },
-        title = { Text("Delete Password?") },
-        text = { Text("This action cannot be undone.") }
+        title = { Text(title) },
+        text = { Text(text) }
     )
 }
