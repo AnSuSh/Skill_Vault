@@ -101,23 +101,33 @@ fun CredentialListScreen(
     // Show FAB unless the list/grid is at the end (last item visible). It will also be visible when at top.
     val showFab by remember {
         derivedStateOf {
-            val isGridEnd = run {
-                val total = gridState.layoutInfo.totalItemsCount
-                if (total == 0) false else gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == total - 1
+            val totalItems = when (val s = state) {
+                is UiState.Success -> s.credentials.size
+                else -> 0
             }
-            val isListEnd = run {
-                val total = listState.layoutInfo.totalItemsCount
-                if (total == 0) false else listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == total - 1
+            if (totalItems == 0) {
+                // Always show if the list is empty.
+                return@derivedStateOf true
             }
-            // If in landscape we check gridState, otherwise listState.
-            val isEnd = when (configuration.orientation) {
-                Configuration.ORIENTATION_LANDSCAPE -> isGridEnd
-                else -> isListEnd
+
+            val canScroll = if (isLandscape) gridState.canScrollForward else listState.canScrollForward
+
+            // If the list can scroll, we show the FAB. It will only be false at the very end.
+            // If the list CANNOT scroll (i.e., all items are visible), we also show the FAB.
+            val allItemsVisible = if (isLandscape) {
+                gridState.layoutInfo.visibleItemsInfo.size == totalItems
+            } else {
+                listState.layoutInfo.visibleItemsInfo.size == totalItems
             }
-            // Visible when not at end
-            !isEnd
+
+            if (allItemsVisible) {
+                true // All items fit on screen, so show the FAB.
+            } else {
+                canScroll // For long lists, visibility depends on whether we can still scroll down.
+            }
         }
     }
+
 
     // Collect one-time events (Snackbar, Biometric Prompt)
     LaunchedEffect(Unit) {

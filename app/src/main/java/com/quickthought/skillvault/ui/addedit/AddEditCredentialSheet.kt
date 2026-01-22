@@ -199,6 +199,8 @@ fun AddEditContent(
             }
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+
         // Action Buttons (your existing Row with Delete and Save buttons)
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -227,7 +229,7 @@ fun AddEditContent(
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Delete Confirmation Dialog
         if (state.showDeleteConfirmation) {
