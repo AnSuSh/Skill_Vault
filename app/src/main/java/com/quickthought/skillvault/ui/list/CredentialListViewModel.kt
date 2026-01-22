@@ -174,7 +174,7 @@ class CredentialListViewModel @Inject constructor(
         }
     }
 
-    fun showErrorMessage(message: String) {
+    fun showErrorMessage(message: String = "Authentication failed.") {
         viewModelScope.launch {
             _uiEvent.emit(ShowSnackbar(message))
         }

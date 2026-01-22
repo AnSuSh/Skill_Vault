@@ -142,7 +142,7 @@ fun AddEditContent(
                 autoCorrectEnabled = true,
             ),
             onValueChange = { viewModel.processAction(ViewAction.AccountNameChanged(it)) },
-            label = { Text("Account Name (e.g., Google, Bank)") },
+            label = { Text(stringResource(R.string.account_name_hint)) },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -155,7 +155,7 @@ fun AddEditContent(
                 autoCorrectEnabled = true,
             ),
             onValueChange = { viewModel.processAction(ViewAction.UsernameChanged(it)) },
-            label = { Text("Username / Email") },
+            label = { Text(stringResource(R.string.username_email_hint)) },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -169,12 +169,14 @@ fun AddEditContent(
                     keyboardType = KeyboardType.Password,
                 ),
                 onValueChange = { viewModel.processAction(ViewAction.PasswordChanged(it)) },
-                label = { Text("Password *") },
+                label = { Text(stringResource(R.string.password_hint)) },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     val image =
                         if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                    val description = if (passwordVisible) "Hide password" else "Show password"
+                    val description = if (passwordVisible) stringResource(R.string.hide_password_desc) else stringResource(
+                        R.string.show_password_desc
+                    )
 
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(imageVector = image, contentDescription = description)
@@ -193,7 +195,7 @@ fun AddEditContent(
                     .padding(top = 8.dp)
                     .weight(1f)
             ) {
-                Icon(Icons.Default.Refresh, contentDescription = "Generate Password")
+                Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.generate_password_desc))
             }
         }
 
@@ -205,7 +207,7 @@ fun AddEditContent(
         ) {
             if (state.isEditMode) {
                 TextButton(onClick = { viewModel.processAction(ViewAction.DeleteTapped) }) {
-                    Icon(Icons.Filled.Delete, contentDescription = "Delete")
+                    Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_text))
                     Spacer(modifier = Modifier.width(4.dp))
                     Text("DELETE", color = MaterialTheme.colorScheme.error)
                 }
@@ -239,8 +241,8 @@ fun AddEditContent(
 
         if (state.showOverwriteConfirmation){
             ConfirmationDialog(
-                title = "Save Password?",
-                text = "This will overwrite an existing credential with the same account name. Are you sure?",
+                title = stringResource(R.string.save_password_alert),
+                text = stringResource(R.string.save_password_warning),
                 onConfirm = { viewModel.processAction(ViewAction.ConfirmOverwrite) },
                 onDismiss = { viewModel.processAction(ViewAction.CancelOverwrite) }
             )

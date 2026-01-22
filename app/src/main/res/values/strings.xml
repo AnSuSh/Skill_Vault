@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Password Vault</string>
     <string name="add_new">New Credential</string>
@@ -6,4 +7,22 @@
     <string name="button_cancel">Cancel</string>
     <string name="delete_password_alert">Delete Password?</string>
     <string name="irreversible_action_warning">This action cannot be undone.</string>
+    <string name="account_name_hint">Account Name (e.g., Google, Bank)</string>
+    <string name="username_email_hint">Username / Email</string>
+    <string name="password_hint">Password *</string>
+    <string name="hide_password_desc">Hide password</string>
+    <string name="show_password_desc">Show password</string>
+    <string name="generate_password_desc">Generate Password</string>
+    <string name="delete_text">Delete</string>
+    <string name="save_password_alert">Save Password?</string>
+    <string name="save_password_warning">This will overwrite an existing credential with the same account name. Are you sure?</string>
+    <string name="loading_credentials_txt">Loading credentials…</string>
+    <string name="no_credentials_found">No credentials found.</string>
+    <string name="verify_identity">Verify Identity</string>
+    <string name="authenticate_to_reveal_password">Authenticate to reveal password</string>
+    <string name="authentication_failed">Authentication failed.</string>
+    <string name="search_accounts">Search accounts…</string>
+    <string name="clear_search">Clear search</string>
+    <string name="no_credentials_saved_yet">No credentials saved yet.</string>
+    <string name="error">Error: %1$s</string>
 </resources>

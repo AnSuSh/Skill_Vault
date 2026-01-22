@@ -134,13 +134,8 @@ fun CredentialListScreen(
 
                 UiEvent.ShowBiometricPrompt -> {
                     biometricAuthenticator.prompt(
-                        title = "Verify Identity",
-                        subtitle = "Authenticate to reveal password",
                         onSuccess = { viewModel.handleAuthenticationSuccess() },
-                        onFailure = {
-                            // Show a snackbar on failure
-                            viewModel.showErrorMessage("Authentication failed.")
-                        }
+                        onFailure = { viewModel.showErrorMessage() }
                     )
                 }
 
@@ -164,7 +159,7 @@ fun CredentialListScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
-                    placeholder = { Text("Search accounts...") },
+                    placeholder = { Text(stringResource(R.string.search_accounts)) },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                     trailingIcon = {
                         if (searchQuery.isNotEmpty()) {
@@ -175,7 +170,10 @@ fun CredentialListScreen(
                                     )
                                 )
                             }) {
-                                Icon(Icons.Default.Clear, contentDescription = "Clear search")
+                                Icon(
+                                    Icons.Default.Clear,
+                                    contentDescription = stringResource(R.string.clear_search)
+                                )
                             }
                         }
                     },
@@ -194,7 +192,10 @@ fun CredentialListScreen(
                         showSheet.value = true
                     }
                 ) {
-                    Icon(Icons.Filled.Add, contentDescription = "Add Credential")
+                    Icon(
+                        Icons.Filled.Add,
+                        contentDescription = stringResource(R.string.add_new_credential)
+                    )
                 }
             }
         }
@@ -262,7 +263,7 @@ fun CredentialListContent(
     pendingDeleteId: Int? = null
 ) {
     if (credentials.isEmpty()) {
-        EmptyState("No credentials saved yet.")
+        EmptyState(stringResource(R.string.no_credentials_saved_yet))
     } else {
         if (isLandscape) {
             // Use LazyVerticalGrid for landscape orientation
@@ -310,7 +311,7 @@ fun CredentialListContent(
 @Composable
 fun ErrorState(message: String) {
     Text(
-        text = "Error: $message",
+        text = stringResource(R.string.error, message),
         color = MaterialTheme.colorScheme.error,
         modifier = Modifier.padding(16.dp)
     )

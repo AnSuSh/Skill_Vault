@@ -21,7 +21,7 @@ class CredentialListViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val repository: CredentialRepository = mockk(relaxed = true)
-    private val credUIDummy = CredentialItemUI(1, "Google", "john.doe@gmail.com")
+//    private val credUIDummy = CredentialItemUI(1, "Google", "john.doe@gmail.com")
     private lateinit var viewModel: CredentialListViewModel
 
     @Before
