@@ -6,8 +6,34 @@ import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.quickthought.skillvault.ui.Screen
+import com.quickthought.skillvault.ui.generator.PasswordGeneratorScreen
 import com.quickthought.skillvault.ui.list.CredentialListScreen
 import com.quickthought.skillvault.ui.list.CredentialListViewModel
 import com.quickthought.skillvault.ui.theme.SkillVaultTheme
@@ -42,7 +68,71 @@ class MainActivity : FragmentActivity() {
         }
 
         setContent {
-            SkillVaultTheme { CredentialListScreen(viewModel) }
+            SkillVaultTheme {
+                val navController = rememberNavController()
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentDestination = navBackStackEntry?.destination
+
+                val items = listOf(Screen.Vault, Screen.Generator)
+
+                Scaffold(
+                    bottomBar = {
+                        NavigationBar {
+                            items.forEach { screen ->
+                                NavigationBarItem(
+                                    icon = { Icon(screen.icon, contentDescription = screen.title) },
+                                    label = { Text(screen.title) },
+                                    selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                                    onClick = {
+                                        navController.navigate(screen.route) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    }
+                ) { innerPadding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screen.Vault.route,
+                        modifier = Modifier
+                            .padding(bottom = innerPadding.calculateBottomPadding())
+                            .consumeWindowInsets(WindowInsets.navigationBars), // Only consume bottom bar insets
+                        enterTransition = {
+                            slideInHorizontally(
+                                initialOffsetX = { it }, // Slide in from the right
+                                animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+                            ) + fadeIn(animationSpec = tween(300))
+                        },
+                        exitTransition = {
+                            slideOutHorizontally(
+                                targetOffsetX = { -it }, // Slide out to the left
+                                animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+                            ) + fadeOut(animationSpec = tween(300))
+                        },
+                        popEnterTransition = {
+                            slideInHorizontally(
+                                initialOffsetX = { -it }, // Slide in from the left
+                                animationSpec = tween(300)
+                            ) + fadeIn(animationSpec = tween(300))
+                        },
+                        popExitTransition = {
+                            slideOutHorizontally(
+                                targetOffsetX = { it }, // Slide out to the right
+                                animationSpec = tween(300)
+                            ) + fadeOut(animationSpec = tween(300))
+                        }
+                    ) {
+                        composable(Screen.Vault.route) { CredentialListScreen(viewModel) }
+                        composable(Screen.Generator.route) { PasswordGeneratorScreen() }
+                    }
+                }
+            }
         }
     }
 

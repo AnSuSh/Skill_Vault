@@ -161,7 +161,9 @@ fun CredentialListScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             Column {
-                TopAppBar(title = { Text(stringResource(R.string.app_name)) })
+                TopAppBar(title = { Text(stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.headlineSmall,
+                ) })
 
                 OutlinedTextField(
                     value = searchQuery,
