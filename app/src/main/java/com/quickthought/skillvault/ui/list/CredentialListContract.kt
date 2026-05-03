@@ -42,7 +42,6 @@ class CredentialListContract {
     sealed class ViewAction {
         object LoadCredentials : ViewAction()
         data class CopyPasswordClicked(val credentialId: Int) : ViewAction()
-        data class CredentialTapped(val credential: CredentialItemUI) : ViewAction()
         data class SearchQueryChanged(val query: String) : ViewAction()
         data class DeleteIconClicked(val id: Int) : ViewAction()
         object ConfirmDelete : ViewAction()

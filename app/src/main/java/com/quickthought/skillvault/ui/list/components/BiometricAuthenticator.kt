@@ -5,6 +5,7 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import com.quickthought.skillvault.R
 
 /**
  * Helper class to manage the BiometricPrompt flow outside of the Composable.
@@ -24,8 +25,8 @@ class BiometricAuthenticator(private val context: Context) {
     }
 
     fun prompt(
-        title: String,
-        subtitle: String,
+        title: String = context.getString(R.string.verify_identity),
+        subtitle: String = context.getString(R.string.authenticate_to_reveal_password),
         onSuccess: () -> Unit,
         onFailure: () -> Unit
     ) {
@@ -64,10 +65,6 @@ class BiometricAuthenticator(private val context: Context) {
                     onSuccess()
                 }
 
-                override fun onAuthenticationFailed() {
-                    super.onAuthenticationFailed()
-                    // Optional: You could show a "Try again" message here
-                }
             }
         )
 

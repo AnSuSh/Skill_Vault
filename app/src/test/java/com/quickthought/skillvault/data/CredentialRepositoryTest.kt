@@ -1,14 +1,11 @@
 package com.quickthought.skillvault.data
 
-import android.util.Log
 import com.quickthought.skillvault.data.local.CredentialDAO
 import com.quickthought.skillvault.di.EncryptionService
 import com.quickthought.skillvault.domain.model.CredentialItemUI
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test

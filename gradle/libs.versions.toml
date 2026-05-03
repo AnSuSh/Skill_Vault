@@ -34,7 +34,6 @@ turbine = "1.2.1"
 # Core, Kotlin, Coroutines
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
-#kotlinx-serialization = { group="org.jetbrains.kotlinx", name="kotlinx-serialization-json", version.ref="kotlinxSerialization" }
 
 # Compose
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }

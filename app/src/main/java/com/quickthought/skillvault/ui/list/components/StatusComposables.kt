@@ -7,9 +7,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.quickthought.skillvault.R
 
 @Composable
 fun LoadingState() {
@@ -20,7 +22,7 @@ fun LoadingState() {
     ) {
         CircularProgressIndicator()
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Loading credentials...")
+        Text(stringResource(R.string.loading_credentials_txt))
     }
 }
 
@@ -33,7 +35,9 @@ fun LoadingStatePreview() {
 @Composable
 fun EmptyState(message: String) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(32.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -54,5 +58,5 @@ fun EmptyState(message: String) {
 @Preview
 @Composable
 fun EmptyStatePreview() {
-    EmptyState(message = "No credentials found.")
+    EmptyState(message = stringResource(R.string.no_credentials_found))
 }

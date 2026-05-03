@@ -1,6 +1,5 @@
 package com.quickthought.skillvault.data
 
-import android.util.Log
 import com.quickthought.skillvault.data.local.CredentialDAO
 import com.quickthought.skillvault.di.EncryptionService
 import com.quickthought.skillvault.domain.model.CredentialItemUI

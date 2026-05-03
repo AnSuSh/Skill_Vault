@@ -51,11 +51,6 @@ class CredentialListViewModel @Inject constructor(
     fun processAction(action: ViewAction) {
         when (action) {
             is ViewAction.CopyPasswordClicked -> handleCopyPasswordClicked(action.credentialId)
-            is ViewAction.CredentialTapped -> {
-                viewModelScope.launch {
-                    _uiEvent.emit(ShowSnackbar("Credential tapped: ${action.credential.credentialId}"))
-                }
-            }
             is ViewAction.DeleteIconClicked -> handleDeleteIconClicked(action.id)
             is ViewAction.SearchQueryChanged -> onSearchQueryChanged(action.query)
             ViewAction.LoadCredentials -> loadCredentials()
@@ -179,7 +174,7 @@ class CredentialListViewModel @Inject constructor(
         }
     }
 
-    fun showErrorMessage(message: String) {
+    fun showErrorMessage(message: String = "Authentication failed.") {
         viewModelScope.launch {
             _uiEvent.emit(ShowSnackbar(message))
         }
