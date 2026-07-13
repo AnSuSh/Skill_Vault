@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
 }
 
@@ -23,18 +24,14 @@ android {
         applicationId = "com.quickthought.skillvault"
         minSdk = 24
         targetSdk = 37
-        versionCode = 4
-        versionName = "1.3.1"
+        versionCode = 5
+        versionName = "2.0-stable"
 
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
         }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        ndk {
-            debugSymbolLevel = "FULL"
-        }
     }
 
     signingConfigs {

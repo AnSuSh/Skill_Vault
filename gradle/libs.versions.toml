@@ -38,6 +38,7 @@ junit = "4.13.2"
 androidXJUnit = "1.3.0"
 mockk = "1.14.11"
 turbine = "1.2.1"
+googleServices = "4.5.0"
 
 [libraries]
 # Core, Kotlin, Coroutines
@@ -108,4 +109,5 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 hilt-gradle = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
