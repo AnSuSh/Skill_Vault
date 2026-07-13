@@ -18,12 +18,18 @@ androidXSecurity = "1.1.0"
 billing = "9.1.0"
 konfetti = "2.0.5"
 
+firebaseBOM = "34.16.0"
+firebaseCrashlytics = "3.0.7"
+
 # Hilt library
 hiltAndroid = "2.60.1"
 hiltAndroidArtifacts = "1.4.0"
 
 # Third Party Libs
 sqlCipher = "4.17.0"
+
+# Logging
+timberLogs = "5.0.1"
 
 # Testing
 coroutinesTest = "1.11.0"
@@ -65,6 +71,12 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 
 androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "androidXSecurity" }
 
+# Firebase
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBOM" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+#firebase-ai = { group = "com.google.firebase", name = "firebase-ai" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+
 # Billing
 billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
 konfetti-compose = { group = "nl.dionsegijn", name = "konfetti-compose", version.ref = "konfetti" }
@@ -76,6 +88,7 @@ androidx-hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation-co
 
 # Third Party
 net-zetetic-sql-cipher = { group = "net.zetetic", name = "sqlcipher-android", version.ref = "sqlCipher" }
+timber-logging = { group = "com.jakewharton.timber", name = "timber", version.ref = "timberLogs" }
 
 # Testing Libraries
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
@@ -95,3 +108,4 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 hilt-gradle = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }

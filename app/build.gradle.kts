@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 val keystoreProperties = Properties()
@@ -51,8 +52,6 @@ android {
             isMinifyEnabled = false
             isDebuggable = true
             isDefault = true
-            versionNameSuffix = "-debug"
-            applicationIdSuffix = ".debug"
         }
         release {
             isMinifyEnabled = true
@@ -63,11 +62,21 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("release")
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+    flavorDimensions += "environment"
+    productFlavors {
+        create("dev") {
+            dimension = "environment"
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
+        create("prod") {
+            dimension = "environment"
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -107,12 +116,18 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
+
     implementation(libs.androidx.security.crypto)
 
     implementation(libs.billing.ktx)
     implementation(libs.konfetti.compose)
 
     implementation(libs.net.zetetic.sql.cipher)
+    implementation(libs.timber.logging)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

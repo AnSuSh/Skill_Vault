@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.billingclient.api.ProductDetails
 import com.quickthought.skillvault.billing.BillingManager
+import com.quickthought.skillvault.util.VaultLogger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,22 +24,39 @@ class AboutViewModel @Inject constructor(
     private val _purchaseSuccess = MutableStateFlow(false)
     val purchaseSuccess: StateFlow<Boolean> = _purchaseSuccess.asStateFlow()
 
+    private val _errorFlowBilling = MutableStateFlow<String?>(null)
+    val errorFlowBilling: StateFlow<String?> = _errorFlowBilling.asStateFlow()
+
     init {
         viewModelScope.launch {
-            billingManager.purchaseSuccessFlow.collect {
-                _purchaseSuccess.value = true
+            launch {
+                billingManager.purchaseSuccessFlow.collect {
+                    _purchaseSuccess.value = true
+                }
+            }
+            launch {
+                billingManager.errorFlow.collect {
+                    _errorFlowBilling.value = it
+                }
+            }
+            launch {
+                billingManager.isConnectionReady.collect { isReady ->
+                    if (isReady) {
+                        fetchProducts()
+                    }
+                }
             }
         }
     }
 
     fun startBillingConnection() {
         billingManager.startConnection()
-        fetchProducts()
     }
 
     private fun fetchProducts() {
         viewModelScope.launch {
             val details = billingManager.getProductDetails()
+            VaultLogger.infoLog("Fetched products: $details")
             _productDetails.value = details
         }
     }

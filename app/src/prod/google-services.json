@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "166069859441",
+    "project_id": "skill-vault-c5060",
+    "storage_bucket": "skill-vault-c5060.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:166069859441:android:beb9aeae220eb82ca6d7d0",
+        "android_client_info": {
+          "package_name": "com.quickthought.skillvault"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGjVr8xbdDvOwfRPj0uo9HdV2J2jTFzD4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -14,11 +14,15 @@ import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchasesUpdatedListener
 import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.queryProductDetails
+import com.quickthought.skillvault.util.VaultLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -32,6 +36,9 @@ class BillingManager(context: Context) : PurchasesUpdatedListener {
     private val _errorFlow = MutableSharedFlow<String>()
     val errorFlow: SharedFlow<String> = _errorFlow
 
+    private val _isConnectionReady = MutableStateFlow(false)
+    val isConnectionReady: StateFlow<Boolean> = _isConnectionReady.asStateFlow()
+
     private var billingClient: BillingClient = BillingClient.newBuilder(context)
         .setListener(this)
         .enablePendingPurchases(
@@ -40,6 +47,7 @@ class BillingManager(context: Context) : PurchasesUpdatedListener {
                 .enableOneTimeProducts()
                 .build()
         )
+        .enableAutoServiceReconnection()
         .build()
 
     companion object {
@@ -55,12 +63,14 @@ class BillingManager(context: Context) : PurchasesUpdatedListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     // The BillingClient is ready. You can query purchases here.
+                    _isConnectionReady.value = true
                 }
             }
 
             override fun onBillingServiceDisconnected() {
                 // Try to restart the connection on the next request to
                 // Google Play by calling the startConnection() method.
+                _isConnectionReady.value = false
             }
         })
     }
@@ -104,9 +114,11 @@ class BillingManager(context: Context) : PurchasesUpdatedListener {
             }
         } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
             // Handle an error caused by a user cancelling the purchase flow.
+            VaultLogger.errorLog("User cancelled the purchase flow")
         } else {
             scope.launch {
                 _errorFlow.emit("Billing error: ${billingResult.debugMessage}")
+                VaultLogger.errorLog("Billing error: ${billingResult.debugMessage}")
             }
         }
     }
@@ -145,6 +157,13 @@ class BillingManager(context: Context) : PurchasesUpdatedListener {
     }
 
     fun onDestroy() {
-        billingClient.endConnection()
+        try {
+            VaultLogger.infoLog("Ending billing connection")
+            billingClient.endConnection()
+        } catch (e: IllegalArgumentException) {
+            VaultLogger.errorLog("Billing service not registered: ${e.message}")
+        } catch (e: Exception) {
+            VaultLogger.errorLog("Error ending billing connection: ${e.message}")
+        }
     }
 }
