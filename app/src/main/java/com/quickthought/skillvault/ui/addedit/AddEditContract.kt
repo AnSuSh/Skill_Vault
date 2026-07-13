@@ -29,7 +29,6 @@ class AddEditContract {
         object ResetState : ViewAction()
         data class AccountNameChanged(val name: String) : ViewAction()
         data class UsernameChanged(val name: String) : ViewAction()
-        data class GeneratePassword(val length: Int = 16) : ViewAction()
         data class PasswordChanged(val password: String) : ViewAction()
         object SaveTapped : ViewAction()
         object DeleteTapped : ViewAction()

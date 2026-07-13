@@ -34,7 +34,6 @@ class AddEditViewModel @Inject constructor(
             is ViewAction.Initialize -> initialize(action.credential)
             is ViewAction.AccountNameChanged -> _uiState.update { it.copy(accountName = action.name) }
             is ViewAction.UsernameChanged -> _uiState.update { it.copy(username = action.name) }
-            is ViewAction.GeneratePassword -> onNewPasswordGenerate(action.length)
             is ViewAction.PasswordChanged -> _uiState.update { it.copy(password = action.password) }
             ViewAction.SaveTapped -> processSaveTapped()
             ViewAction.DeleteTapped -> _uiState.update { it.copy(showDeleteConfirmation = true) }
@@ -45,11 +44,6 @@ class AddEditViewModel @Inject constructor(
             ViewAction.CancelOverwrite -> cancelOverwrite()
             ViewAction.ConfirmOverwrite -> confirmOverwrite()
         }
-    }
-
-    private fun onNewPasswordGenerate(length: Int) {
-        val length = length.coerceIn(8, 64)
-        _uiState.update { it.copy(password = PasswordGenerator.generate(length)) }
     }
 
     private fun initialize(credential: CredentialItemUI?) {

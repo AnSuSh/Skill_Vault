@@ -42,11 +42,7 @@ object DatabaseModule {
             context,
             CredentialDatabase::class.java,
             CredentialDatabase.DATABASE_NAME
-        )
-            // Integrates SQLCipher with Room
-//            .openHelperFactory(supportFactory)
-            .fallbackToDestructiveMigration()
-            .build()
+        ).build()
     }
 
     /**

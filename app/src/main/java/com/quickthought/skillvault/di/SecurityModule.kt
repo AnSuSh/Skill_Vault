@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -79,7 +80,7 @@ object SecurityModule {
         @ApplicationContext context: Context
     ): SharedPreferences {
         val spec = KeyGenParameterSpec.Builder(
-            androidx.security.crypto.MasterKey.DEFAULT_MASTER_KEY_ALIAS,
+            MasterKey.DEFAULT_MASTER_KEY_ALIAS,
             KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
         )
             .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
@@ -87,7 +88,7 @@ object SecurityModule {
             .setKeySize(256)
             .build()
 
-        val masterKey = androidx.security.crypto.MasterKey.Builder(context)
+        val masterKey = MasterKey.Builder(context)
             .setKeyGenParameterSpec(spec)
             .build()
 

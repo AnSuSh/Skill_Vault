@@ -1,6 +1,7 @@
 package com.quickthought.skillvault.ui.generator
 
 import android.content.ClipData
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,25 +9,30 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -46,8 +52,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.quickthought.skillvault.R
+import com.quickthought.skillvault.ui.theme.SkillVaultTheme
 import com.quickthought.skillvault.util.PasswordGenerator
 import kotlinx.coroutines.launch
 
@@ -106,7 +115,10 @@ fun PasswordGeneratorScreen(
         ) {
             // 1. Result Display
             Card(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize()
+                    .heightIn(min = 128.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
@@ -123,17 +135,7 @@ fun PasswordGeneratorScreen(
                         ),
                         modifier = Modifier.weight(1f)
                     )
-                    IconButton(onClick = {
-                        generatedPassword = PasswordGenerator.generate(
-                            length.toInt(),
-                            includeUpper,
-                            includeLower,
-                            includeDigits,
-                            includeSymbols
-                        )
-                    }) {
-                        Icon(Icons.Default.Refresh, "Regenerate")
-                    }
+
                 }
             }
 
@@ -164,7 +166,7 @@ fun PasswordGeneratorScreen(
                 progress = { animatedStrength },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(8.dp),
+                    .height(16.dp),
                 color = animatedColor,
                 strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
             )
@@ -175,18 +177,22 @@ fun PasswordGeneratorScreen(
             }
 
             Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.Start
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 56.dp)
+                    .animateContentSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = "Time to crack: $timeValue",
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleMediumEmphasized,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = caption,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodySmallEmphasized,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -194,12 +200,27 @@ fun PasswordGeneratorScreen(
             Spacer(Modifier.height(32.dp))
 
             // 3. Length Control
-            Text("Length: ${length.toInt()}", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "Length: ${length.toInt()}",
+                style = MaterialTheme.typography.titleMediumEmphasized
+            )
+            Spacer(modifier = Modifier.height(8.dp))
             Slider(
                 value = length,
                 onValueChange = { length = it },
                 valueRange = 8f..64f,
-                steps = 56
+                thumb = {
+                    SliderDefaults.Thumb(
+                        interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
+                        thumbSize = DpSize(8.dp, 52.dp)
+                    )
+                },
+                track = {
+                    SliderDefaults.Track(
+                        sliderState = it,
+                        modifier = Modifier.height(40.dp)
+                    )
+                }
             )
 
             Spacer(Modifier.height(16.dp))
@@ -211,24 +232,57 @@ fun PasswordGeneratorScreen(
             ComplexityToggle("Include Symbols", includeSymbols) { includeSymbols = it }
 
             Spacer(Modifier.weight(1f))
-
+            Spacer(Modifier.height(16.dp))
             // 5. Action Button
-            Button(
-                onClick = {
-                    coroutineScope.launch {
-                        clipboardManager.setClipEntry(
-                            ClipEntry(ClipData.newPlainText("", AnnotatedString(generatedPassword)))
-                        )
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(12.dp)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Icon(Icons.Default.ContentCopy, null)
-                Spacer(Modifier.width(8.dp))
-                Text("Copy Secure Password")
+                Button(
+                    onClick = {
+                        generatedPassword = PasswordGenerator.generate(
+                            length.toInt(),
+                            includeUpper,
+                            includeLower,
+                            includeDigits,
+                            includeSymbols
+                        )
+                    }, modifier = Modifier
+                        .height(56.dp)
+                        .weight(1f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(Icons.Default.Refresh, "Regenerate")
+                    Spacer(Modifier.width(8.dp))
+                    Text("Regenerate")
+                }
+                Button(
+                    onClick = {
+                        coroutineScope.launch {
+                            clipboardManager.setClipEntry(
+                                ClipEntry(
+                                    ClipData.newPlainText(
+                                        "",
+                                        AnnotatedString(generatedPassword)
+                                    )
+                                )
+                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .height(56.dp)
+                        .weight(1f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(Icons.Default.ContentCopy, "Copy the Generated password")
+                    Spacer(Modifier.width(8.dp))
+                    Text("Copy")
+                }
             }
         }
     }
@@ -243,7 +297,23 @@ fun ComplexityToggle(label: String, checked: Boolean, onCheckedChange: (Boolean)
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(label)
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
+        Text(label, style = MaterialTheme.typography.titleMediumEmphasized)
+        Switch(checked = checked, onCheckedChange = onCheckedChange, thumbContent = {
+            if (checked) {
+                Icon(
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = "Checked Icon",
+                    modifier = Modifier.size(SwitchDefaults.IconSize)
+                )
+            }
+        })
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PasswordGeneratorScreenPreview() {
+    SkillVaultTheme {
+        PasswordGeneratorScreen()
     }
 }

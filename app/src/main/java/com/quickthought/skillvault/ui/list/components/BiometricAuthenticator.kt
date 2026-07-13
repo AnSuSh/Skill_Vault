@@ -14,7 +14,7 @@ import com.quickthought.skillvault.R
 class BiometricAuthenticator(private val context: Context) {
 
     private val executor = ContextCompat.getMainExecutor(context)
-    private val biometricManager = BiometricManager.from(context)
+    private val biometricManager by lazy { BiometricManager.from(context) }
 
     // Check if biometric authentication is available
     private fun canAuthenticate(): Boolean {

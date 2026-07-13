@@ -36,6 +36,7 @@ import com.quickthought.skillvault.ui.Screen
 import com.quickthought.skillvault.ui.generator.PasswordGeneratorScreen
 import com.quickthought.skillvault.ui.list.CredentialListScreen
 import com.quickthought.skillvault.ui.list.CredentialListViewModel
+import com.quickthought.skillvault.ui.about.AboutScreen
 import com.quickthought.skillvault.ui.theme.SkillVaultTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -128,8 +129,9 @@ class MainActivity : FragmentActivity() {
                             ) + fadeOut(animationSpec = tween(300))
                         }
                     ) {
-                        composable(Screen.Vault.route) { CredentialListScreen(viewModel) }
+                        composable(Screen.Vault.route) { CredentialListScreen(viewModel, onAboutClick = { navController.navigate(Screen.About.route) }) }
                         composable(Screen.Generator.route) { PasswordGeneratorScreen() }
+                        composable(Screen.About.route) { AboutScreen(onBack = { navController.popBackStack() }) }
                     }
                 }
             }

@@ -19,18 +19,20 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeExtendedFloatingActionButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -47,6 +49,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -65,14 +68,40 @@ import com.quickthought.skillvault.ui.list.components.LoadingState
 import com.quickthought.skillvault.ui.list.components.copyTextToClipboard
 import com.quickthought.skillvault.ui.widgets.ConfirmationDialog
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlin.time.Duration.Companion.milliseconds
+
+@Composable
+fun CredentialListScreen(
+    viewModel: CredentialListViewModel = hiltViewModel(),
+    onAboutClick: () -> Unit
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val searchQuery by viewModel.searchQuery.collectAsState()
+
+    CredentialListScreenContent(
+        state = state,
+        searchQuery = searchQuery,
+        uiEvent = viewModel.uiEvent,
+        processAction = { viewModel.processAction(it) },
+        onAuthenticationSuccess = { viewModel.handleAuthenticationSuccess() },
+        onAuthenticationFailure = { viewModel.showErrorMessage(it) },
+        onAboutClick = onAboutClick
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CredentialListScreen(
-    viewModel: CredentialListViewModel = hiltViewModel()
+fun CredentialListScreenContent(
+    state: UiState,
+    searchQuery: String,
+    uiEvent: Flow<UiEvent>,
+    processAction: (ViewAction) -> Unit,
+    onAuthenticationSuccess: () -> Unit,
+    onAuthenticationFailure: (String) -> Unit,
+    onAboutClick: () -> Unit
 ) {
-
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -87,9 +116,12 @@ fun CredentialListScreen(
     val sendHaptic = remember { mutableStateOf(false) }
 
     // --- Biometric Authentication Handling ---
-    val biometricAuthenticator = remember { BiometricAuthenticator(context) }
+    val isInspectionMode = LocalInspectionMode.current
+    val biometricAuthenticator = remember {
+        if (isInspectionMode) null else BiometricAuthenticator(context)
+    }
 
-    val searchQuery by viewModel.searchQuery.collectAsState()
+    val searchActive = remember { mutableStateOf(false) }
 
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -110,7 +142,8 @@ fun CredentialListScreen(
                 return@derivedStateOf true
             }
 
-            val canScroll = if (isLandscape) gridState.canScrollForward else listState.canScrollForward
+            val canScroll =
+                if (isLandscape) gridState.canScrollForward else listState.canScrollForward
 
             // If the list can scroll, we show the FAB. It will only be false at the very end.
             // If the list CANNOT scroll (i.e., all items are visible), we also show the FAB.
@@ -131,7 +164,7 @@ fun CredentialListScreen(
 
     // Collect one-time events (Snackbar, Biometric Prompt)
     LaunchedEffect(Unit) {
-        viewModel.uiEvent.collect { event ->
+        uiEvent.collect { event ->
             when (event) {
                 is UiEvent.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(event.message)
@@ -143,9 +176,9 @@ fun CredentialListScreen(
                 }
 
                 UiEvent.ShowBiometricPrompt -> {
-                    biometricAuthenticator.prompt(
-                        onSuccess = { viewModel.handleAuthenticationSuccess() },
-                        onFailure = { viewModel.showErrorMessage() }
+                    biometricAuthenticator?.prompt(
+                        onSuccess = { onAuthenticationSuccess() },
+                        onFailure = { onAuthenticationFailure("Authentication failed.") }
                     )
                 }
 
@@ -157,94 +190,172 @@ fun CredentialListScreen(
         }
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            Column {
-                TopAppBar(title = { Text(stringResource(R.string.app_name),
-                    style = MaterialTheme.typography.headlineSmall,
-                ) })
-
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { viewModel.processAction(ViewAction.SearchQueryChanged(it)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    placeholder = { Text(stringResource(R.string.search_accounts)) },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                    trailingIcon = {
-                        if (searchQuery.isNotEmpty()) {
-                            IconButton(onClick = {
-                                viewModel.processAction(
-                                    ViewAction.SearchQueryChanged(
-                                        ""
-                                    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            topBar = {
+                Column {
+                    AnimatedVisibility(visible = !searchActive.value) {
+                        TopAppBar(
+                            title = {
+                                Text(
+                                    stringResource(R.string.app_name),
+                                    style = MaterialTheme.typography.headlineSmall,
                                 )
-                            }) {
-                                Icon(
-                                    Icons.Default.Clear,
-                                    contentDescription = stringResource(R.string.clear_search)
+                            },
+                            actions = {
+                                IconButton(onClick = { searchActive.value = true }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Search,
+                                        contentDescription = "Search"
+                                    )
+                                }
+                                IconButton(
+                                    onClick = onAboutClick
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Info,
+                                        contentDescription = "About Us"
+                                    )
+                                }
+                            }
+                        )
+                    }
+
+                    AnimatedVisibility(visible = searchActive.value) {
+                        SearchBar(
+                            query = searchQuery,
+                            onQueryChange = { processAction(ViewAction.SearchQueryChanged(it)) },
+                            onSearch = { searchActive.value = false },
+                            active = searchActive.value,
+                            onActiveChange = { searchActive.value = it },
+                            placeholder = { Text(stringResource(R.string.search_accounts)) },
+                            leadingIcon = {
+                                if (searchActive.value) {
+                                    IconButton(onClick = { searchActive.value = false }) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                            contentDescription = "Back"
+                                        )
+                                    }
+                                } else {
+                                    Icon(Icons.Default.Search, contentDescription = null)
+                                }
+                            },
+                            trailingIcon = {
+                                if (searchActive.value && searchQuery.isNotEmpty()) {
+                                    IconButton(onClick = {
+                                        processAction(
+                                            ViewAction.SearchQueryChanged(
+                                                ""
+                                            )
+                                        )
+                                    }) {
+                                        Icon(
+                                            Icons.Default.Clear,
+                                            contentDescription = stringResource(R.string.clear_search)
+                                        )
+                                    }
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = if (searchActive.value) 0.dp else 16.dp,
+                                    vertical = if (searchActive.value) 0.dp else 8.dp
+                                ),
+                        ) {
+                            if (state is UiState.Success) {
+                                CredentialListContent(
+                                    credentials = state.credentials,
+                                    isLandscape = isLandscape,
+                                    onItemClick = {
+                                        showSheet.value = true
+                                        credentialToEdit.value = it
+                                        searchActive.value = false
+                                    },
+                                    onCopyClick = {
+                                        processAction(
+                                            ViewAction.CopyPasswordClicked(
+                                                it.credentialId
+                                            )
+                                        )
+                                    },
+                                    onDeleteClick = {
+                                        processAction(
+                                            ViewAction.DeleteIconClicked(
+                                                it
+                                            )
+                                        )
+                                    },
+                                    onConfirmDeleteClick = { processAction(ViewAction.ConfirmDelete) },
+                                    onDismissDeleteClick = { processAction(ViewAction.DismissDeleteDialog) },
+                                    pendingDeleteId = state.pendingDeleteId
                                 )
                             }
                         }
-                    },
-                    singleLine = true,
-                    shape = RoundedCornerShape(12.dp)
-                )
-            }
-        },
-        floatingActionButton = {
-            AnimatedVisibility(
-                visible = showFab,
-            ) {
-                FloatingActionButton(
-                    onClick = {
-                        credentialToEdit.value = null // Ensure model is null when adding new
-                        showSheet.value = true
                     }
+                }
+            },
+            floatingActionButton = {
+                AnimatedVisibility(
+                    visible = showFab,
                 ) {
-                    Icon(
-                        Icons.Filled.Add,
-                        contentDescription = stringResource(R.string.add_new_credential)
-                    )
+                    LargeExtendedFloatingActionButton(
+                        onClick = {
+                            credentialToEdit.value = null // Ensure model is null when adding new
+                            showSheet.value = true
+                        }
+                    ) {
+                        Icon(
+                            Icons.Filled.Add,
+                            contentDescription = stringResource(R.string.add_new_credential)
+                        )
+                    }
+                }
+            },
+            floatingActionButtonPosition = FabPosition.Center,
+        ) { paddingValues ->
+
+            if (sendHaptic.value) {
+                val haptic = LocalHapticFeedback.current
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                LaunchedEffect(Unit) {
+                    delay(1000.milliseconds)
+                    sendHaptic.value = false
                 }
             }
-        }
-    ) { paddingValues ->
 
-        if (sendHaptic.value) {
-            val haptic = LocalHapticFeedback.current
-            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            LaunchedEffect(Unit) {
-                delay(1000)
-                sendHaptic.value = false
-            }
-        }
-
-        Box(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ) {
-            when (state) {
-                is UiState.Loading -> LoadingState()
-                is UiState.Error -> ErrorState((state as UiState.Error).message)
-                is UiState.Success -> CredentialListContent(
-                    credentials = (state as UiState.Success).credentials,
-                    isLandscape = isLandscape,
-                    listState = listState,
-                    gridState = gridState,
-                    onItemClick = {
-                        showSheet.value = true
-                        credentialToEdit.value = it
-                    },
-                    onCopyClick = { viewModel.processAction(ViewAction.CopyPasswordClicked(it.credentialId)) },
-                    onDeleteClick = { viewModel.processAction(ViewAction.DeleteIconClicked(it)) },
-                    onConfirmDeleteClick = { viewModel.processAction(ViewAction.ConfirmDelete) },
-                    onDismissDeleteClick = { viewModel.processAction(ViewAction.DismissDeleteDialog) },
-                    pendingDeleteId = (state as UiState.Success).pendingDeleteId
-                )
+            Box(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+            ) {
+                when (state) {
+                    is UiState.Loading -> LoadingState()
+                    is UiState.Error -> ErrorState(state.message)
+                    is UiState.Success -> CredentialListContent(
+                        credentials = state.credentials,
+                        isLandscape = isLandscape,
+                        listState = listState,
+                        gridState = gridState,
+                        onItemClick = {
+                            showSheet.value = true
+                            credentialToEdit.value = it
+                        },
+                        onCopyClick = {
+                            processAction(
+                                ViewAction.CopyPasswordClicked(
+                                    it.credentialId
+                                )
+                            )
+                        },
+                        onDeleteClick = { processAction(ViewAction.DeleteIconClicked(it)) },
+                        onConfirmDeleteClick = { processAction(ViewAction.ConfirmDelete) },
+                        onDismissDeleteClick = { processAction(ViewAction.DismissDeleteDialog) },
+                        pendingDeleteId = state.pendingDeleteId
+                    )
+                }
             }
         }
     }
@@ -364,4 +475,57 @@ fun CredentialListContentEmptyPreview() {
 @Composable
 fun ErrorStatePreview() {
     ErrorState(message = "Something went wrong while loading data.")
+}
+
+@Preview(showBackground = true, name = "Credential List Screen - Success")
+@Composable
+fun CredentialListScreenPreview() {
+    val dummyCredentials = listOf(
+        CredentialItemUI(1, "Google", "john.doe@gmail.com"),
+        CredentialItemUI(2, "Facebook", "john.d"),
+        CredentialItemUI(3, "Twitter", "@john_doe")
+    )
+    MaterialTheme {
+        CredentialListScreenContent(
+            state = UiState.Success(credentials = dummyCredentials),
+            searchQuery = "",
+            uiEvent = emptyFlow(),
+            processAction = {},
+            onAuthenticationSuccess = {},
+            onAuthenticationFailure = {},
+            onAboutClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Credential List Screen - Empty")
+@Composable
+fun CredentialListScreenEmptyPreview() {
+    MaterialTheme {
+        CredentialListScreenContent(
+            state = UiState.Success(credentials = emptyList()),
+            searchQuery = "",
+            uiEvent = emptyFlow(),
+            processAction = {},
+            onAuthenticationSuccess = {},
+            onAuthenticationFailure = {},
+            onAboutClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Credential List Screen - Loading")
+@Composable
+fun CredentialListScreenLoadingPreview() {
+    MaterialTheme {
+        CredentialListScreenContent(
+            state = UiState.Loading,
+            searchQuery = "",
+            uiEvent = emptyFlow(),
+            processAction = {},
+            onAuthenticationSuccess = {},
+            onAuthenticationFailure = {},
+            onAboutClick = {}
+        )
+    }
 }

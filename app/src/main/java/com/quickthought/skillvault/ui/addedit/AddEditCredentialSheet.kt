@@ -16,7 +16,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -24,7 +23,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -161,43 +159,29 @@ fun AddEditContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            OutlinedTextField(
-                value = state.password,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done,
-                    keyboardType = KeyboardType.Password,
-                ),
-                onValueChange = { viewModel.processAction(ViewAction.PasswordChanged(it)) },
-                label = { Text(stringResource(R.string.password_hint)) },
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                trailingIcon = {
-                    val image =
-                        if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                    val description = if (passwordVisible) stringResource(R.string.hide_password_desc) else stringResource(
+        OutlinedTextField(
+            value = state.password,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Password,
+            ),
+            onValueChange = { viewModel.processAction(ViewAction.PasswordChanged(it)) },
+            label = { Text(stringResource(R.string.password_hint)) },
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                val image =
+                    if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                val description =
+                    if (passwordVisible) stringResource(R.string.hide_password_desc) else stringResource(
                         R.string.show_password_desc
                     )
 
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(imageVector = image, contentDescription = description)
-                    }
-                },
-                modifier = Modifier.weight(9f)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            IconButton(
-                onClick = {
-                    viewModel.processAction(ViewAction.GeneratePassword())
-                }, colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = MaterialTheme.colorScheme.primary
-                ),
-                modifier = Modifier
-                    .padding(top = 8.dp)
-                    .weight(1f)
-            ) {
-                Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.generate_password_desc))
-            }
-        }
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(imageVector = image, contentDescription = description)
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -209,7 +193,10 @@ fun AddEditContent(
         ) {
             if (state.isEditMode) {
                 TextButton(onClick = { viewModel.processAction(ViewAction.DeleteTapped) }) {
-                    Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_text))
+                    Icon(
+                        Icons.Filled.Delete,
+                        contentDescription = stringResource(R.string.delete_text)
+                    )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text("DELETE", color = MaterialTheme.colorScheme.error)
                 }
@@ -241,7 +228,7 @@ fun AddEditContent(
             )
         }
 
-        if (state.showOverwriteConfirmation){
+        if (state.showOverwriteConfirmation) {
             ConfirmationDialog(
                 title = stringResource(R.string.save_password_alert),
                 text = stringResource(R.string.save_password_warning),

@@ -3,7 +3,6 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
@@ -17,14 +16,14 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.quickthought.skillvault"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.quickthought.skillvault"
         minSdk = 24
-        targetSdk = 36
-        versionCode = 2
-        versionName = "1.2.0"
+        targetSdk = 37
+        versionCode = 4
+        versionName = "1.3.1"
 
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
@@ -70,8 +69,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
         compose = true
@@ -109,6 +109,9 @@ dependencies {
 
     implementation(libs.androidx.security.crypto)
 
+    implementation(libs.billing.ktx)
+    implementation(libs.konfetti.compose)
+
     implementation(libs.net.zetetic.sql.cipher)
 
     androidTestImplementation(libs.androidx.junit)
@@ -125,5 +128,4 @@ dependencies {
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    debugImplementation(libs.androidx.compose.ui.test.junit4)
 }

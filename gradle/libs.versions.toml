@@ -1,33 +1,36 @@
 [versions]
 
-agp = "8.13.2"
-coreKtx = "1.17.0"
-coroutines = "1.10.2"
-kotlin = "2.0.0"
-ksp = "2.0.0-1.0.23"
+agp = "9.2.1"
+coreKtx = "1.19.0"
+coroutines = "1.11.0"
+kotlin = "2.4.0"
+ksp = "2.3.10"
 
-composeBom = "2025.12.01"
-androidXActivity = "1.12.2"
+composeBom = "2026.06.01"
+material3 = "1.5.0-alpha23"
+androidXActivity = "1.13.0"
 androidXBiometric = "1.1.0"
 androidXCoreSplashScreen = "1.2.0"
-androidXLifecycle = "2.10.0"
-androidXNavigation = "2.9.6"
-androidXRoom = "2.7.0"
+androidXLifecycle = "2.11.0"
+androidXNavigation = "2.9.8"
+androidXRoom = "2.8.4"
 androidXSecurity = "1.1.0"
+billing = "9.1.0"
+konfetti = "2.0.5"
 
 # Hilt library
-hiltAndroid = "2.57.2"
-hiltAndroidArtifacts = "1.3.0"
+hiltAndroid = "2.60.1"
+hiltAndroidArtifacts = "1.4.0"
 
 # Third Party Libs
-sqlCipher = "4.12.0"
+sqlCipher = "4.17.0"
 
 # Testing
-coroutinesTest = "1.10.2"
-espressoCore = "3.0.0"
+coroutinesTest = "1.11.0"
+espressoCore = "3.7.0"
 junit = "4.13.2"
-androidXJUnit = "1.0.0"
-mockk = "1.14.7"
+androidXJUnit = "1.3.0"
+mockk = "1.14.11"
 turbine = "1.2.1"
 
 [libraries]
@@ -43,7 +46,7 @@ androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graph
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 
-androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 androidx-compose-material-icons = { group = "androidx.compose.material", name = "material-icons-extended" }
 
 # Pure Androidx
@@ -61,6 +64,10 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidXRoom" }
 
 androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "androidXSecurity" }
+
+# Billing
+billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
+konfetti-compose = { group = "nl.dionsegijn", name = "konfetti-compose", version.ref = "konfetti" }
 
 # Hilt
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltAndroid" }
@@ -88,4 +95,3 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 hilt-gradle = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
