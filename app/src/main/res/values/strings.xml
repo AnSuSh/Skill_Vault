@@ -26,4 +26,16 @@
     <string name="no_credentials_saved_yet">No credentials saved yet.</string>
     <string name="error">Error: %1$s</string>
     <string name="password_lab_title">Password Lab</string>
+    <string name="search_desc">Search</string>
+    <string name="about_us_desc">About Us</string>
+    <string name="back_desc">Back</string>
+    <string name="delete_caps">DELETE</string>
+    <string name="save_caps">SAVE</string>
+    <string name="auth_failed">Authentication failed.</string>
+    <string name="password_copied">Password copied to clipboard!</string>
+    <string name="security_error">Security Error: %1$s</string>
+    <string name="fill_fields_error">Please fill in account name, username, and password.</string>
+    <string name="update_password_error">To update, please re-enter or change the password.</string>
+    <string name="save_failed">Failed to save: %1$s</string>
+    <string name="delete_failed">Failed to delete: %1$s</string>
 </resources>

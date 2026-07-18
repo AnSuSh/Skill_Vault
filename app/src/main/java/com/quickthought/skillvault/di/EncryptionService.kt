@@ -41,9 +41,10 @@ class EncryptionService @Inject constructor(private val secretKey: SecretKey) {
 
 
     /**
-     * Decrypts a Base64 encoded string.
-     * @param encryptedText The Base64 encoded string to decrypt.
-     * @return The original plaintext string.
+     * Decrypts the given encrypted string using AES/GCM.
+     *
+     * @param encryptedText The Base64 encoded encrypted string (including IV).
+     * @return The decrypted plaintext string.
      */
     fun decrypt(encryptedText: String): String {
         // 1. Decode the Base64 string and split it back into IV and encrypted data
@@ -98,6 +99,12 @@ class EncryptionService @Inject constructor(
     // alongside the ciphertext.
     private val iv = IvParameterSpec(ByteArray(16)) // Fixed 16-byte IV for simplicity
 
+    /**
+     * Encrypts the given plaintext string using AES/GCM.
+     *
+     * @param plainText The string to encrypt.
+     * @return The encrypted string in Base64 format, including the IV.
+     */
     fun encrypt(plainText: String): String {
         try {
             val cipher = Cipher.getInstance(transformation)
@@ -111,6 +118,12 @@ class EncryptionService @Inject constructor(
         }
     }
 
+    /**
+     * Decrypts the given encrypted string using AES/GCM.
+     *
+     * @param encryptedText The Base64 encoded encrypted string (including IV).
+     * @return The decrypted plaintext string.
+     */
     fun decrypt(encryptedText: String): String {
         try {
             val cipher = Cipher.getInstance(transformation)

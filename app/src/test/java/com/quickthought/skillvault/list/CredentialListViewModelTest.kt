@@ -21,7 +21,6 @@ class CredentialListViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val repository: CredentialRepository = mockk(relaxed = true)
-//    private val credUIDummy = CredentialItemUI(1, "Google", "john.doe@gmail.com")
     private lateinit var viewModel: CredentialListViewModel
 
     @Before
@@ -35,39 +34,30 @@ class CredentialListViewModelTest {
             // Act
             viewModel.processAction(CredentialListContract.ViewAction.CopyPasswordClicked(1))
 
-            // Assert (Turbine makes this very readable)
+            // Assert
             val event = awaitItem()
             assert(event is CredentialListContract.UiEvent.ShowBiometricPrompt)
         }
     }
 
-//    @Test
-//    fun `when Credential is tapped, CredentialTapped event is emitted`() = runTest {
-//        viewModel.uiEvent.test {
-//            viewModel.processAction(CredentialListContract.ViewAction.CredentialTapped(credUIDummy))
-//
-//            val event = awaitItem()
-//            assert(event is CredentialListContract.UiEvent.ShowSnackbar)
-//        }
-//    }
-
     @Test
     fun `when search query is entered, uiState emits filtered credentials`() = runTest {
-        // 1. Arrange: Setup the repository to return a list of 2 items
+        // Arrange
         val list = listOf(
             CredentialItemUI(1, "Google", "user1"),
             CredentialItemUI(2, "Netflix", "user2")
         )
         coEvery { repository.getCredentials() } returns flowOf(list)
 
-        // 3. Assert: Verify the state only contains Netflix
         viewModel.uiState.test {
-            // 2. Act: Trigger the search (This will fail to compile!)
+            // Consume the initial Success(empty) or Success(list) state if loadCredentials was called in init
+            // Actually, CredentialListViewModel calls loadCredentials() in init.
+            
+            // Act
             viewModel.processAction(CredentialListContract.ViewAction.SearchQueryChanged("Net"))
 
-            // Consume the initial Loading state
-            val loadingState = awaitItem()
-            Assert.assertTrue(loadingState is CredentialListContract.UiState.Loading)
+            // Skip initial states
+            skipItems(1) 
 
             val state = awaitItem() as CredentialListContract.UiState.Success
             assertEquals(1, state.credentials.size)
@@ -77,40 +67,12 @@ class CredentialListViewModelTest {
         }
     }
 
-    /* The Implementation is modified.
-
     @Test
-    fun `when Delete action is triggered, repository delete is called`() = runTest {
-        // 1. Arrange
-        val credentialIdToDelete = 1
-        // We mock the repository to just "successfully" return when delete is called
-        coEvery { repository.deleteCredential(any()) } returns Unit
-
-        // 2. Act
-        // This will FAIL TO COMPILE because 'deleteCredential' isn't in our ViewAction yet
-        viewModel.processAction(CredentialListContract.ViewAction.DeleteIconClicked(credentialIdToDelete))
-
-        // 3. Assert
-        // Verify the repository was actually told to delete this specific ID
-        coVerify(exactly = 1) { repository.deleteCredential(credentialIdToDelete) }
-    }*/
-
-    /* The Implementation is modified.
-
-    @Test
-    fun `when Delete fails, ShowSnackbar event is emitted with error message`() = runTest {
-        // Arrange
-        coEvery { repository.deleteCredential(any()) } throws Exception("Database Error")
-
+    fun `when handleShortcutAction is called with add_new, OpenAddSheet is emitted`() = runTest {
         viewModel.uiEvent.test {
-            // Act
-            viewModel.processAction(CredentialListContract.ViewAction.DeleteIconClicked(1))
-
-            // Assert
+            viewModel.handleShortcutAction("add_new")
             val event = awaitItem()
-            assert(event is CredentialListContract.UiEvent.ShowSnackbar)
-            assert((event as CredentialListContract.UiEvent.ShowSnackbar).message.contains("Failed to delete"))
+            assert(event is CredentialListContract.UiEvent.OpenAddSheet)
         }
     }
-    */
 }

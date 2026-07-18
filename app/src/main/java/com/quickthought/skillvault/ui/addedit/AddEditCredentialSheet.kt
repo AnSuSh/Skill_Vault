@@ -1,5 +1,6 @@
 package com.quickthought.skillvault.ui.addedit
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -62,6 +64,7 @@ fun AddEditCredentialHost( // This is the new entry point
     initialCredential: CredentialItemUI? = null,
     viewModel: AddEditViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Initialize the ViewModel with data if in edit mode
@@ -76,11 +79,15 @@ fun AddEditCredentialHost( // This is the new entry point
     }
 
     // This handles closing the sheet/dialog on success
+    @SuppressLint("LocalContextGetResourceValueCall")
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collect { event ->
             when (event) {
                 UiEvent.SaveSuccess, UiEvent.DeleteSuccess -> onDismiss()
-                is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
+                is UiEvent.ShowError -> {
+                    val message = event.message ?: event.messageResId?.let { context.getString(it) }
+                    message?.let { snackbarHostState.showSnackbar(it) }
+                }
             }
         }
     }
@@ -198,7 +205,7 @@ fun AddEditContent(
                         contentDescription = stringResource(R.string.delete_text)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("DELETE", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.delete_caps), color = MaterialTheme.colorScheme.error)
                 }
             }
             Button(
@@ -211,7 +218,7 @@ fun AddEditContent(
                         modifier = Modifier.size(20.dp)
                     )
                 } else {
-                    Text("SAVE")
+                    Text(stringResource(R.string.save_caps))
                 }
             }
         }

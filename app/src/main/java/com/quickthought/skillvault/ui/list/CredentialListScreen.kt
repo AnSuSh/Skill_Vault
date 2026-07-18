@@ -1,5 +1,6 @@
 package com.quickthought.skillvault.ui.list
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
@@ -161,13 +162,14 @@ fun CredentialListScreenContent(
         }
     }
 
-
     // Collect one-time events (Snackbar, Biometric Prompt)
+    @SuppressLint("LocalContextGetResourceValueCall")
     LaunchedEffect(Unit) {
         uiEvent.collect { event ->
             when (event) {
                 is UiEvent.ShowSnackbar -> {
-                    snackbarHostState.showSnackbar(event.message)
+                    val message = event.message ?: event.messageResId?.let { context.getString(it) }
+                    message?.let { snackbarHostState.showSnackbar(it) }
                 }
 
                 is UiEvent.CopyToClipBoard -> {
@@ -178,7 +180,7 @@ fun CredentialListScreenContent(
                 UiEvent.ShowBiometricPrompt -> {
                     biometricAuthenticator?.prompt(
                         onSuccess = { onAuthenticationSuccess() },
-                        onFailure = { onAuthenticationFailure("Authentication failed.") }
+                        onFailure = { onAuthenticationFailure(context.getString(R.string.auth_failed)) }
                     )
                 }
 
@@ -207,7 +209,7 @@ fun CredentialListScreenContent(
                                 IconButton(onClick = { searchActive.value = true }) {
                                     Icon(
                                         imageVector = Icons.Default.Search,
-                                        contentDescription = "Search"
+                                        contentDescription = stringResource(R.string.search_desc)
                                     )
                                 }
                                 IconButton(
@@ -215,7 +217,7 @@ fun CredentialListScreenContent(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Info,
-                                        contentDescription = "About Us"
+                                        contentDescription = stringResource(R.string.about_us_desc)
                                     )
                                 }
                             }
@@ -235,7 +237,7 @@ fun CredentialListScreenContent(
                                     IconButton(onClick = { searchActive.value = false }) {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                            contentDescription = "Back"
+                                            contentDescription = stringResource(R.string.back_desc)
                                         )
                                     }
                                 } else {

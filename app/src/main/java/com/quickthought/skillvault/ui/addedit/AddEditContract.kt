@@ -20,7 +20,7 @@ class AddEditContract {
     sealed class UiEvent {
         object SaveSuccess : UiEvent()
         object DeleteSuccess : UiEvent()
-        data class ShowError(val message: String) : UiEvent()
+        data class ShowError(val message: String? = null, val messageResId: Int? = null) : UiEvent()
     }
 
     sealed class ViewAction {

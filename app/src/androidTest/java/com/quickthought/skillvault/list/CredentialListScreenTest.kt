@@ -27,4 +27,24 @@ class CredentialListScreenTest {
         // Check if our EmptyState text is visible
         composeTestRule.onNodeWithText("No credentials saved yet.").assertIsDisplayed()
     }
+
+    @Test
+    fun credentialList_showsItems_whenDataExists() {
+        val dummyCredentials = listOf(
+            com.quickthought.skillvault.domain.model.CredentialItemUI(1, "Google", "john.doe@gmail.com")
+        )
+        composeTestRule.setContent {
+            CredentialListContent(
+                credentials = dummyCredentials,
+                onItemClick = {},
+                onCopyClick = {},
+                onDeleteClick = {},
+                onConfirmDeleteClick = {},
+                onDismissDeleteClick = {}
+            )
+        }
+
+        composeTestRule.onNodeWithText("Google").assertIsDisplayed()
+        composeTestRule.onNodeWithText("john.doe@gmail.com").assertIsDisplayed()
+    }
 }

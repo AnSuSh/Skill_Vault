@@ -29,7 +29,7 @@ class CredentialListContract {
      * Represents a one-time event that triggers a UI action (e.g., showing a Snackbar).
      */
     sealed class UiEvent {
-        data class ShowSnackbar(val message: String) : UiEvent()
+        data class ShowSnackbar(val message: String? = null, val messageResId: Int? = null) : UiEvent()
         data class CopyToClipBoard(val password: String) : UiEvent()
         object ShowBiometricPrompt : UiEvent()
         object OpenAddSheet : UiEvent()
