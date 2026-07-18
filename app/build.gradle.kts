@@ -24,8 +24,8 @@ android {
         applicationId = "com.quickthought.skillvault"
         minSdk = 24
         targetSdk = 37
-        versionCode = 5
-        versionName = "2.0-stable"
+        versionCode = 6
+        versionName = "2.1.0-pasphrase"
 
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
