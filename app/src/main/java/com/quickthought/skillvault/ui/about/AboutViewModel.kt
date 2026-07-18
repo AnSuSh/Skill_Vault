@@ -4,6 +4,8 @@ import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.billingclient.api.ProductDetails
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import com.quickthought.skillvault.billing.BillingManager
 import com.quickthought.skillvault.util.VaultLogger
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,6 +13,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,6 +30,15 @@ class AboutViewModel @Inject constructor(
 
     private val _errorFlowBilling = MutableStateFlow<String?>(null)
     val errorFlowBilling: StateFlow<String?> = _errorFlowBilling.asStateFlow()
+
+    private val _feedbackText = MutableStateFlow("")
+    val feedbackText: StateFlow<String> = _feedbackText.asStateFlow()
+
+    private val _isSubmittingFeedback = MutableStateFlow(false)
+    val isSubmittingFeedback: StateFlow<Boolean> = _isSubmittingFeedback.asStateFlow()
+
+    private val _feedbackSubmissionSuccess = MutableStateFlow<Boolean?>(null)
+    val feedbackSubmissionSuccess: StateFlow<Boolean?> = _feedbackSubmissionSuccess.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -67,6 +80,46 @@ class AboutViewModel @Inject constructor(
 
     fun resetPurchaseSuccess() {
         _purchaseSuccess.value = false
+    }
+
+    fun onFeedbackTextChanged(text: String) {
+        _feedbackText.value = text
+    }
+
+    fun submitFeedback() {
+        val text = _feedbackText.value.trim()
+        if (text.isEmpty()) return
+
+        viewModelScope.launch {
+            _isSubmittingFeedback.value = true
+            try {
+                val db = Firebase.firestore
+
+                // Create a feedback object/map
+                val feedback = hashMapOf(
+                    "content" to text,
+                    "timestamp" to System.currentTimeMillis(),
+                    "deviceId" to UUID.randomUUID().toString() // Or actual user ID if using Auth
+                )
+
+                // Add a new document with a generated ID
+                db.collection("feedback")
+                    .add(feedback)
+                    .await() // From kotlinx-coroutines-play-services
+
+                _feedbackText.value = ""
+                _feedbackSubmissionSuccess.value = true
+            } catch (e: Exception) {
+                VaultLogger.errorLog("Feedback submission failed: ${e.message}")
+                _feedbackSubmissionSuccess.value = false
+            } finally {
+                _isSubmittingFeedback.value = false
+            }
+        }
+    }
+
+    fun resetFeedbackStatus() {
+        _feedbackSubmissionSuccess.value = null
     }
 
     override fun onCleared() {

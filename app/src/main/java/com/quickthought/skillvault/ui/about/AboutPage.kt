@@ -18,16 +18,20 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CardGiftcard
+import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Update
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -72,6 +76,10 @@ fun AboutScreen(
     val billingErrors by viewModel.errorFlowBilling.collectAsState()
     val sheetState = rememberModalBottomSheetState()
 
+    val feedbackText by viewModel.feedbackText.collectAsState()
+    val isSubmittingFeedback by viewModel.isSubmittingFeedback.collectAsState()
+    val feedbackSubmissionSuccess by viewModel.feedbackSubmissionSuccess.collectAsState()
+
     LaunchedEffect(Unit) {
         viewModel.startBillingConnection()
     }
@@ -105,25 +113,11 @@ fun AboutScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(24.dp)
+                        .padding(vertical = 24.dp, horizontal = 16.dp)
                         .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(
-                        text = stringResource(R.string.app_name),
-                        style = MaterialTheme.typography.displayMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-
-                    Text(
-                        text = "Securely manage your credentials with ease.",
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
 
                     AboutActionCard(
                         title = "Share App",
@@ -157,6 +151,15 @@ fun AboutScreen(
                     )
 
                     AboutActionCard(
+                        title = "Support Us",
+                        subtitle = "Help us keep the app free and secure",
+                        icon = Icons.Default.CardGiftcard,
+                        onClick = {
+                            showSupportOptions = true
+                        }
+                    )
+
+                    AboutActionCard(
                         title = "Check For Updates",
                         subtitle = "Check for new features and improvements",
                         icon = Icons.Default.Update,
@@ -166,16 +169,14 @@ fun AboutScreen(
                         }
                     )
 
-                    AboutActionCard(
-                        title = "Support Us",
-                        subtitle = "Help us keep the app free and secure",
-                        icon = Icons.Default.CardGiftcard,
-                        onClick = {
-                            showSupportOptions = true
-                        }
+                    FeedbackSection(
+                        text = feedbackText,
+                        isSubmitting = isSubmittingFeedback,
+                        submissionSuccess = feedbackSubmissionSuccess,
+                        onTextChanged = { viewModel.onFeedbackTextChanged(it) },
+                        onSubmit = { viewModel.submitFeedback() },
+                        onResetStatus = { viewModel.resetFeedbackStatus() }
                     )
-
-                    Spacer(modifier = Modifier.height(16.dp))
 
                     Footer()
                 }
@@ -202,6 +203,94 @@ fun AboutScreen(
 
         billingErrors?.let { error ->
             VaultLogger.errorLog("Billing error: $error")
+        }
+    }
+}
+
+@Composable
+fun FeedbackSection(
+    text: String,
+    isSubmitting: Boolean,
+    submissionSuccess: Boolean?,
+    onTextChanged: (String) -> Unit,
+    onSubmit: () -> Unit,
+    onResetStatus: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Feedback,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = stringResource(R.string.feedback_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            if (submissionSuccess == true) {
+                Text(
+                    text = stringResource(R.string.feedback_success),
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+                TextButton(
+                    onClick = onResetStatus,
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text("Send More")
+                }
+            } else {
+                OutlinedTextField(
+                    value = text,
+                    onValueChange = onTextChanged,
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text(stringResource(R.string.feedback_hint)) },
+                    enabled = !isSubmitting,
+                    maxLines = 5
+                )
+
+                if (submissionSuccess == false) {
+                    Text(
+                        text = stringResource(R.string.feedback_error),
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                Button(
+                    onClick = onSubmit,
+                    enabled = text.isNotBlank() && !isSubmitting,
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    if (isSubmitting) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(stringResource(R.string.feedback_submit))
+                    }
+                }
+            }
         }
     }
 }

@@ -88,6 +88,7 @@ android {
 dependencies {
 
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.androidx.core.ktx)
 
     implementation(platform(libs.androidx.compose.bom))
@@ -117,6 +118,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.storage)
 
     implementation(libs.androidx.security.crypto)
 

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">पासवर्ड वॉल्ट</string>
+    <string name="add_new">नया क्रेडेंशियल</string>
+    <string name="add_new_credential">नया क्रेडेंशियल जोड़ें</string>
+    <string name="button_confirm">पुष्टि करें</string>
+    <string name="button_cancel">रद्द करें</string>
+    <string name="delete_password_alert">पासवर्ड हटाएं?</string>
+    <string name="irreversible_action_warning">यह क्रिया वापस नहीं ली जा सकती।</string>
+    <string name="account_name_hint">खाते का नाम (जैसे: Google, बैंक)</string>
+    <string name="username_email_hint">यूज़रनेम / ईमेल</string>
+    <string name="password_hint">पासवर्ड *</string>
+    <string name="hide_password_desc">पासवर्ड छुपाएं</string>
+    <string name="show_password_desc">पासवर्ड दिखाएं</string>
+    <string name="generate_password_desc">पासवर्ड जेनरेट करें</string>
+    <string name="delete_text">हटाएं</string>
+    <string name="save_password_alert">पासवर्ड सुरक्षित करें?</string>
+    <string name="save_password_warning">यह उसी खाते के नाम वाले मौजूदा क्रेडेंशियल को बदल देगा। क्या आप सुनिश्चित हैं?</string>
+    <string name="loading_credentials_txt">क्रेडेंशियल लोड हो रहे हैं…</string>
+    <string name="no_credentials_found">कोई क्रेडेंशियल नहीं मिला।</string>
+    <string name="verify_identity">पहचान सत्यापित करें</string>
+    <string name="authenticate_to_reveal_password">पासवर्ड देखने के लिए प्रमाणित करें</string>
+    <string name="authentication_failed">प्रमाणीकरण विफल रहा।</string>
+    <string name="search_accounts">खाते खोजें…</string>
+    <string name="clear_search">खोज साफ़ करें</string>
+    <string name="no_credentials_saved_yet">अभी तक कोई क्रेडेंशियल सुरक्षित नहीं किया गया है।</string>
+    <string name="error">त्रुटि: %1$s</string>
+    <string name="password_lab_title">पासवर्ड लैब</string>
+    <string name="search_desc">खोज</string>
+    <string name="about_us_desc">हमारे बारे में</string>
+    <string name="back_desc">पीछे</string>
+    <string name="delete_caps">हटाएं</string>
+    <string name="save_caps">सुरक्षित करें</string>
+    <string name="auth_failed">प्रमाणीकरण विफल रहा।</string>
+    <string name="password_copied">पासवर्ड क्लिपबोर्ड पर कॉपी किया गया!</string>
+    <string name="security_error">सुरक्षा त्रुटि: %1$s</string>
+    <string name="fill_fields_error">कृपया खाते का नाम, यूज़रनेम और पासवर्ड भरें।</string>
+    <string name="update_password_error">अपडेट करने के लिए, कृपया पासवर्ड दोबारा दर्ज करें या बदलें।</string>
+    <string name="save_failed">सुरक्षित करने में विफल: %1$s</string>
+    <string name="delete_failed">हटाने में विफल: %1$s</string>
+
+    <!-- Feedback -->
+    <string name="feedback_title">प्रतिक्रिया भेजें</string>
+    <string name="feedback_hint">हमें बताएं कि आप क्या सोचते हैं या किसी समस्या की रिपोर्ट करें…</string>
+    <string name="feedback_submit">जमा करें</string>
+    <string name="feedback_success">प्रतिक्रिया भेज दी गई! धन्यवाद।</string>
+    <string name="feedback_error">प्रतिक्रिया भेजने में विफल।</string>
+</resources>

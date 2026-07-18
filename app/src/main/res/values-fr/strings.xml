@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Coffre-fort de mots de passe</string>
+    <string name="add_new">Nouvel identifiant</string>
+    <string name="add_new_credential">Ajouter un nouvel identifiant</string>
+    <string name="button_confirm">Confirmer</string>
+    <string name="button_cancel">Annuler</string>
+    <string name="delete_password_alert">Supprimer le mot de passe ?</string>
+    <string name="irreversible_action_warning">Cette action est irréversible.</string>
+    <string name="account_name_hint">Nom du compte (ex: Google, Banque)</string>
+    <string name="username_email_hint">Nom d\'utilisateur / E-mail</string>
+    <string name="password_hint">Mot de passe *</string>
+    <string name="hide_password_desc">Masquer le mot de passe</string>
+    <string name="show_password_desc">Afficher le mot de passe</string>
+    <string name="generate_password_desc">Générer un mot de passe</string>
+    <string name="delete_text">Supprimer</string>
+    <string name="save_password_alert">Enregistrer le mot de passe ?</string>
+    <string name="save_password_warning">Cela écrasera un identifiant existant avec le même nom de compte. Êtes-vous sûr ?</string>
+    <string name="loading_credentials_txt">Chargement des identifiants…</string>
+    <string name="no_credentials_found">Aucun identifiant trouvé.</string>
+    <string name="verify_identity">Vérifier l\'identité</string>
+    <string name="authenticate_to_reveal_password">S\'authentifier pour révéler le mot de passe</string>
+    <string name="authentication_failed">L\'authentification a échoué.</string>
+    <string name="search_accounts">Rechercher des comptes…</string>
+    <string name="clear_search">Effacer la recherche</string>
+    <string name="no_credentials_saved_yet">Aucun identifiant encore enregistré.</string>
+    <string name="error">Erreur : %1$s</string>
+    <string name="password_lab_title">Laboratoire de mots de passe</string>
+    <string name="search_desc">Rechercher</string>
+    <string name="about_us_desc">À propos de nous</string>
+    <string name="back_desc">Retour</string>
+    <string name="delete_caps">SUPPRIMER</string>
+    <string name="save_caps">ENREGISTRER</string>
+    <string name="auth_failed">L\'authentification a échoué.</string>
+    <string name="password_copied">Mot de passe copié dans le presse-papiers !</string>
+    <string name="security_error">Erreur de sécurité : %1$s</string>
+    <string name="fill_fields_error">Veuillez remplir le nom du compte, le nom d\'utilisateur et le mot de passe.</string>
+    <string name="update_password_error">Pour mettre à jour, veuillez saisir à nouveau ou modifier le mot de passe.</string>
+    <string name="save_failed">Échec de l\'enregistrement : %1$s</string>
+    <string name="delete_failed">Échec de la suppression : %1$s</string>
+
+    <!-- Feedback -->
+    <string name="feedback_title">Envoyer des commentaires</string>
+    <string name="feedback_hint">Dites-nous ce que vous en pensez ou signalez un problème…</string>
+    <string name="feedback_submit">Envoyer</string>
+    <string name="feedback_success">Commentaires envoyés ! Merci.</string>
+    <string name="feedback_error">Échec de l\'envoi des commentaires.</string>
+</resources>

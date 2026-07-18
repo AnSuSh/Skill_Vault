@@ -38,4 +38,11 @@
     <string name="update_password_error">To update, please re-enter or change the password.</string>
     <string name="save_failed">Failed to save: %1$s</string>
     <string name="delete_failed">Failed to delete: %1$s</string>
+
+    <!-- Feedback -->
+    <string name="feedback_title">Send Feedback</string>
+    <string name="feedback_hint">Tell us what you think or report an issue…</string>
+    <string name="feedback_submit">Submit</string>
+    <string name="feedback_success">Feedback sent! Thank you.</string>
+    <string name="feedback_error">Failed to send feedback.</string>
 </resources>
