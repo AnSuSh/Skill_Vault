@@ -1,5 +1,6 @@
 package com.quickthought.skillvault.data.local
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 
@@ -9,10 +10,11 @@ import androidx.room.RoomDatabase
  */
 @Database(
     entities = [CredentialEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = true,
     autoMigrations = [
-]
+        AutoMigration(from = 1, to = 2)
+    ]
 )
 abstract class CredentialDatabase: RoomDatabase() {
     // Define the DAOs that the database contains

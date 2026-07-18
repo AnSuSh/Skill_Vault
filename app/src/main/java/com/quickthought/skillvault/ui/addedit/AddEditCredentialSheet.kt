@@ -160,6 +160,36 @@ fun AddEditContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
+            value = state.websiteUrl,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next,
+                keyboardType = KeyboardType.Uri,
+                autoCorrectEnabled = false,
+            ),
+            onValueChange = { viewModel.processAction(ViewAction.WebsiteUrlChanged(it)) },
+            label = { Text("Website URL (Optional)") },
+            placeholder = { Text("https://example.com") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = state.packageName,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next,
+                keyboardType = KeyboardType.Text,
+                autoCorrectEnabled = false,
+            ),
+            onValueChange = { viewModel.processAction(ViewAction.PackageNameChanged(it)) },
+            label = { Text("App Package Name (Optional)") },
+            placeholder = { Text("com.example.app") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
             value = state.password,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done,

@@ -44,4 +44,7 @@ interface CredentialDAO {
      */
     @Delete
     suspend fun deleteCredential(credential: CredentialEntity)
+
+    @Query("SELECT * FROM credentials WHERE websiteUrl LIKE '%' || :domain || '%' OR packageName = :packageName")
+    suspend fun findCredentialsForAutofill(domain: String?, packageName: String?): List<CredentialEntity>
 }

@@ -1,5 +1,8 @@
 package com.quickthought.skillvault.ui.list
 
+import android.content.SharedPreferences
+import androidx.core.content.edit
+import android.view.autofill.AutofillManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quickthought.skillvault.data.CredentialRepository
@@ -25,7 +28,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CredentialListViewModel @Inject constructor(
-    private val credentialRepository: CredentialRepository
+    private val credentialRepository: CredentialRepository,
+    private val autofillManager: AutofillManager?,
+    private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
     // --- State Management ---
@@ -56,6 +61,10 @@ class CredentialListViewModel @Inject constructor(
             ViewAction.LoadCredentials -> loadCredentials()
             ViewAction.ConfirmDelete -> handleConfirmDelete()
             ViewAction.DismissDeleteDialog -> handleCancelledDeleteFlow()
+            ViewAction.CheckAutofillService -> checkAutofillServiceStatus()
+            ViewAction.DismissAutofillPrompt -> handleDismissAutofillPrompt()
+            ViewAction.NeverAskAutofillClicked -> handleNeverAskAutofillClicked()
+            ViewAction.OpenAutofillSettings -> handleOpenAutofillSettings()
         }
     }
 
@@ -76,6 +85,38 @@ class CredentialListViewModel @Inject constructor(
             _uiState.update {
                 (it as UiState.Success).copy(pendingDeleteId = null)
             }
+        }
+    }
+
+    private fun checkAutofillServiceStatus() {
+        val neverAskAgain = sharedPreferences.getBoolean("never_ask_autofill", false)
+        if (neverAskAgain) return
+
+        val isEnabled = autofillManager?.hasEnabledAutofillServices() ?: false
+        if (!isEnabled && _uiState.value is UiState.Success) {
+            _uiState.update {
+                (it as UiState.Success).copy(showAutofillPrompt = true)
+            }
+        }
+    }
+
+    private fun handleDismissAutofillPrompt() {
+        if (_uiState.value is UiState.Success) {
+            _uiState.update {
+                (it as UiState.Success).copy(showAutofillPrompt = false)
+            }
+        }
+    }
+
+    private fun handleNeverAskAutofillClicked() {
+        sharedPreferences.edit { putBoolean("never_ask_autofill", true) }
+        handleDismissAutofillPrompt()
+    }
+
+    private fun handleOpenAutofillSettings() {
+        viewModelScope.launch {
+            _uiEvent.emit(UiEvent.NavigateToAutofillSettings)
+            handleDismissAutofillPrompt()
         }
     }
 

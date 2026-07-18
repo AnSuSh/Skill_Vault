@@ -15,7 +15,8 @@ class CredentialListContract {
         data class Success(
             val credentials: List<CredentialItemUI>,
             val pendingDeleteId: Int? = null, // If not null, the dialog is visible
-            val isDeleting: Boolean = false
+            val isDeleting: Boolean = false,
+            val showAutofillPrompt: Boolean = false
         ) : UiState()
 
         // Object representing the initial loading state
@@ -33,7 +34,7 @@ class CredentialListContract {
         data class CopyToClipBoard(val password: String) : UiEvent()
         object ShowBiometricPrompt : UiEvent()
         object OpenAddSheet : UiEvent()
-//        object NavigateToSettings : UiEvent()
+        object NavigateToAutofillSettings : UiEvent()
     }
 
     /**
@@ -46,5 +47,9 @@ class CredentialListContract {
         data class DeleteIconClicked(val id: Int) : ViewAction()
         object ConfirmDelete : ViewAction()
         object DismissDeleteDialog : ViewAction()
+        object CheckAutofillService : ViewAction()
+        object DismissAutofillPrompt : ViewAction()
+        object NeverAskAutofillClicked : ViewAction()
+        object OpenAutofillSettings : ViewAction()
     }
 }

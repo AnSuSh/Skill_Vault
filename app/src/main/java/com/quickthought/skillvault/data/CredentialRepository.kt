@@ -63,4 +63,8 @@ class CredentialRepository @Inject constructor(
         // 3. Return Plaintext: This is the string ready for the clipboard.
         encryptionService.decrypt(encryptedText)
     }
+
+    suspend fun getCredentialsForAutofill(domain: String?, packageName: String?): List<CredentialItemUI> = withContext(Dispatchers.IO) {
+        credentialDao.findCredentialsForAutofill(domain, packageName).map { it.toDomainModel() }
+    }
 }

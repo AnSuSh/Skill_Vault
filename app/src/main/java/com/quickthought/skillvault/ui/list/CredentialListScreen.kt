@@ -1,6 +1,9 @@
 package com.quickthought.skillvault.ui.list
 
 import android.content.res.Configuration
+import android.content.Intent
+import android.provider.Settings
+import androidx.core.net.toUri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,6 +69,7 @@ import com.quickthought.skillvault.ui.list.components.CredentialItem
 import com.quickthought.skillvault.ui.list.components.EmptyState
 import com.quickthought.skillvault.ui.list.components.LoadingState
 import com.quickthought.skillvault.ui.list.components.copyTextToClipboard
+import com.quickthought.skillvault.ui.widgets.AutofillPromptDialog
 import com.quickthought.skillvault.ui.widgets.ConfirmationDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -186,7 +190,19 @@ fun CredentialListScreenContent(
                     credentialToEdit.value = null
                     showSheet.value = true
                 }
+
+                UiEvent.NavigateToAutofillSettings -> {
+                    val intent = Intent(Settings.ACTION_REQUEST_SET_AUTOFILL_SERVICE)
+                    intent.data = ("package:" + context.packageName).toUri()
+                    context.startActivity(intent)
+                }
             }
+        }
+    }
+
+    LaunchedEffect(state) {
+        if (state is UiState.Success) {
+            processAction(ViewAction.CheckAutofillService)
         }
     }
 
@@ -368,6 +384,16 @@ fun CredentialListScreenContent(
                 credentialToEdit.value = null // Clear the model
             },
             initialCredential = credentialToEdit.value
+        )
+    }
+
+    if (state is UiState.Success && state.showAutofillPrompt) {
+        AutofillPromptDialog(
+            title = stringResource(R.string.autofill_prompt_title),
+            text = stringResource(R.string.autofill_prompt_message),
+            onConfirm = { processAction(ViewAction.OpenAutofillSettings) },
+            onDismiss = { processAction(ViewAction.DismissAutofillPrompt) },
+            onNeverAskAgain = { processAction(ViewAction.NeverAskAutofillClicked) }
         )
     }
 }

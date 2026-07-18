@@ -3,11 +3,11 @@
 agp = "9.2.1"
 coreKtx = "1.19.0"
 coroutines = "1.11.0"
-kotlin = "2.4.0"
+kotlin = "2.4.10"
 ksp = "2.3.10"
 
 composeBom = "2026.06.01"
-material3 = "1.5.0-alpha23"
+material3 = "1.5.0-alpha24"
 androidXActivity = "1.13.0"
 androidXBiometric = "1.1.0"
 androidXCoreSplashScreen = "1.2.0"

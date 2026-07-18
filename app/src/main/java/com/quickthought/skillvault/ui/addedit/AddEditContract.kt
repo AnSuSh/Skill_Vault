@@ -11,6 +11,8 @@ class AddEditContract {
         val accountName: String = "",
         val username: String = "",
         val password: String = "",
+        val websiteUrl: String = "",
+        val packageName: String = "",
         val isSaving: Boolean = false,
         val isEditMode: Boolean = false,
         val showDeleteConfirmation: Boolean = false,
@@ -30,6 +32,8 @@ class AddEditContract {
         data class AccountNameChanged(val name: String) : ViewAction()
         data class UsernameChanged(val name: String) : ViewAction()
         data class PasswordChanged(val password: String) : ViewAction()
+        data class WebsiteUrlChanged(val url: String) : ViewAction()
+        data class PackageNameChanged(val packageName: String) : ViewAction()
         object SaveTapped : ViewAction()
         object DeleteTapped : ViewAction()
         object DeleteCancelled : ViewAction()

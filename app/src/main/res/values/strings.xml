@@ -26,4 +26,9 @@
     <string name="no_credentials_saved_yet">No credentials saved yet.</string>
     <string name="error">Error: %1$s</string>
     <string name="password_lab_title">Password Lab</string>
+    <string name="autofill_prompt_title">Enable Autofill Service</string>
+    <string name="autofill_prompt_message">To use Password Vault to fill in your passwords in other apps, you need to enable it as your autofill service in system settings.</string>
+    <string name="autofill_prompt_button_settings">Go to Settings</string>
+    <string name="autofill_prompt_button_not_now">Not Now</string>
+    <string name="autofill_prompt_button_manual">I will manage manually!</string>
 </resources>

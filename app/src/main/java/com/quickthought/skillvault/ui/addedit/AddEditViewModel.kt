@@ -1,6 +1,5 @@
 package com.quickthought.skillvault.ui.addedit
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quickthought.skillvault.data.CredentialRepository
@@ -8,7 +7,7 @@ import com.quickthought.skillvault.domain.model.CredentialItemUI
 import com.quickthought.skillvault.ui.addedit.AddEditContract.UiEvent
 import com.quickthought.skillvault.ui.addedit.AddEditContract.UiState
 import com.quickthought.skillvault.ui.addedit.AddEditContract.ViewAction
-import com.quickthought.skillvault.util.PasswordGenerator
+import com.quickthought.skillvault.util.VaultLogger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +34,8 @@ class AddEditViewModel @Inject constructor(
             is ViewAction.AccountNameChanged -> _uiState.update { it.copy(accountName = action.name) }
             is ViewAction.UsernameChanged -> _uiState.update { it.copy(username = action.name) }
             is ViewAction.PasswordChanged -> _uiState.update { it.copy(password = action.password) }
+            is ViewAction.WebsiteUrlChanged -> _uiState.update { it.copy(websiteUrl = action.url) }
+            is ViewAction.PackageNameChanged -> _uiState.update { it.copy(packageName = action.packageName) }
             ViewAction.SaveTapped -> processSaveTapped()
             ViewAction.DeleteTapped -> _uiState.update { it.copy(showDeleteConfirmation = true) }
             ViewAction.DeleteConfirmed -> deleteCredential()
@@ -53,6 +54,8 @@ class AddEditViewModel @Inject constructor(
                 title = "Edit Credential",
                 accountName = it.accountName,
                 username = it.username,
+                websiteUrl = it.websiteUrl ?: "",
+                packageName = it.packageName ?: "",
                 isEditMode = true
                 // Password is intentionally left blank for security reasons
             )
@@ -113,15 +116,17 @@ class AddEditViewModel @Inject constructor(
             val credentialToSave = CredentialItemUI(
                 credentialId = state.credentialId ?: 0,
                 accountName = state.accountName,
-                username = state.username
+                username = state.username,
+                websiteUrl = state.websiteUrl.ifBlank { null },
+                packageName = state.packageName.ifBlank { null }
             )
 
-            Log.i("AddEditViewModel", "Saving credential: $credentialToSave")
+            VaultLogger.infoLog("Saving credential: $credentialToSave")
             // Pass the domain model and the plaintext password to the Repository
             repository.saveCredential(credentialToSave, passwordToEncrypt)
             _uiEvent.emit(UiEvent.SaveSuccess)
         } catch (e: Exception) {
-            Log.e("AddEditViewModel", "Error saving credential: ${e.message}")
+            VaultLogger.errorLog("Error saving credential: ${e.message}")
             _uiEvent.emit(UiEvent.ShowError("Failed to save: ${e.message}"))
         } finally {
             _uiState.update { it.copy(isSaving = false) }
