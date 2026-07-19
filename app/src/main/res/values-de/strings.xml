@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Passwort-Tresor</string>
+    <string name="add_new">Neue Zugangsdaten</string>
+    <string name="add_new_credential">Neue Zugangsdaten hinzufügen</string>
+    <string name="button_confirm">Bestätigen</string>
+    <string name="button_cancel">Abbrechen</string>
+    <string name="delete_password_alert">Passwort löschen?</string>
+    <string name="irreversible_action_warning">Diese Aktion kann nicht rückgängig gemacht werden.</string>
+    <string name="account_name_hint">Kontoname (z. B. Google, Bank)</string>
+    <string name="username_email_hint">Benutzername / E-Mail</string>
+    <string name="password_hint">Passwort *</string>
+    <string name="hide_password_desc">Passwort ausblenden</string>
+    <string name="show_password_desc">Passwort anzeigen</string>
+    <string name="generate_password_desc">Passwort generieren</string>
+    <string name="delete_text">Löschen</string>
+    <string name="save_password_alert">Passwort speichern?</string>
+    <string name="save_password_warning">Dadurch werden vorhandene Zugangsdaten mit demselben Kontonamen überschrieben. Sind Sie sicher?</string>
+    <string name="loading_credentials_txt">Zugangsdaten werden geladen…</string>
+    <string name="no_credentials_found">Keine Zugangsdaten gefunden.</string>
+    <string name="verify_identity">Identität verifizieren</string>
+    <string name="authenticate_to_reveal_password">Authentifizieren, um Passwort anzuzeigen</string>
+    <string name="authentication_failed">Authentifizierung fehlgeschlagen.</string>
+    <string name="search_accounts">Konten suchen…</string>
+    <string name="clear_search">Suche löschen</string>
+    <string name="no_credentials_saved_yet">Noch keine Zugangsdaten gespeichert.</string>
+    <string name="error">Fehler: %1$s</string>
+    <string name="password_lab_title">Passwort-Labor</string>
+    <string name="search_desc">Suchen</string>
+    <string name="about_us_desc">Über uns</string>
+    <string name="back_desc">Zurück</string>
+    <string name="delete_caps">LÖSCHEN</string>
+    <string name="save_caps">SPEICHERN</string>
+    <string name="auth_failed">Authentifizierung fehlgeschlagen.</string>
+    <string name="password_copied">Passwort in die Zwischenablage kopiert!</string>
+    <string name="security_error">Sicherheitsfehler: %1$s</string>
+    <string name="fill_fields_error">Bitte Kontoname, Benutzername und Passwort ausfüllen.</string>
+    <string name="update_password_error">Zum Aktualisieren das Passwort bitte erneut eingeben oder ändern.</string>
+    <string name="save_failed">Speichern fehlgeschlagen: %1$s</string>
+    <string name="delete_failed">Löschen fehlgeschlagen: %1$s</string>
+
+    <!-- Feedback -->
+    <string name="feedback_title">Feedback senden</string>
+    <string name="feedback_hint">Sagen Sie uns, was Sie denken oder melden Sie ein Problem…</string>
+    <string name="feedback_submit">Absenden</string>
+    <string name="feedback_success">Feedback gesendet! Vielen Dank.</string>
+    <string name="feedback_error">Feedback konnte nicht gesendet werden.</string>
+</resources>

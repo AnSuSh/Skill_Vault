@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">密码保险箱</string>
+    <string name="add_new">新凭据</string>
+    <string name="add_new_credential">添加新凭据</string>
+    <string name="button_confirm">确认</string>
+    <string name="button_cancel">取消</string>
+    <string name="delete_password_alert">删除密码？</string>
+    <string name="irreversible_action_warning">此操作无法撤销。</string>
+    <string name="account_name_hint">账户名称 (例如：Google、银行)</string>
+    <string name="username_email_hint">用户名 / 电子邮件</string>
+    <string name="password_hint">密码 *</string>
+    <string name="hide_password_desc">隐藏密码</string>
+    <string name="show_password_desc">显示密码</string>
+    <string name="generate_password_desc">生成密码</string>
+    <string name="delete_text">删除</string>
+    <string name="save_password_alert">保存密码？</string>
+    <string name="save_password_warning">这将覆盖具有相同账户名称的现有凭据。您确定吗？</string>
+    <string name="loading_credentials_txt">正在加载凭据…</string>
+    <string name="no_credentials_found">未找到凭据。</string>
+    <string name="verify_identity">验证身份</string>
+    <string name="authenticate_to_reveal_password">验证身份以显示密码</string>
+    <string name="authentication_failed">身份验证失败。</string>
+    <string name="search_accounts">搜索账户…</string>
+    <string name="clear_search">清除搜索</string>
+    <string name="no_credentials_saved_yet">尚未保存任何凭据。</string>
+    <string name="error">错误：%1$s</string>
+    <string name="password_lab_title">密码实验室</string>
+    <string name="search_desc">搜索</string>
+    <string name="about_us_desc">关于我们</string>
+    <string name="back_desc">返回</string>
+    <string name="delete_caps">删除</string>
+    <string name="save_caps">保存</string>
+    <string name="auth_failed">身份验证失败。</string>
+    <string name="password_copied">密码已复制到剪贴板！</string>
+    <string name="security_error">安全错误：%1$s</string>
+    <string name="fill_fields_error">请填写账户名称、用户名和密码。</string>
+    <string name="update_password_error">如需更新，请重新输入或更改密码。</string>
+    <string name="save_failed">保存失败：%1$s</string>
+    <string name="delete_failed">删除失败：%1$s</string>
+
+    <!-- Feedback -->
+    <string name="feedback_title">发送反馈</string>
+    <string name="feedback_hint">告诉我们您的想法或报告问题…</string>
+    <string name="feedback_submit">提交</string>
+    <string name="feedback_success">反馈已发送！谢谢。</string>
+    <string name="feedback_error">发送反馈失败。</string>
+</resources>

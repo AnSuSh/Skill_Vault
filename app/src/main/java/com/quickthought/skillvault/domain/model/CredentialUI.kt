@@ -3,6 +3,14 @@ package com.quickthought.skillvault.domain.model
 import com.quickthought.skillvault.data.local.CredentialEntity
 
 
+/**
+ * Domain model representing a credential item in the UI.
+ * Sensitive information like password is not stored in this class.
+ *
+ * @property credentialId Unique identifier for the credential.
+ * @property accountName Name of the account (e.g., Google, Github).
+ * @property username The username or email associated with the account.
+ */
 data class CredentialItemUI(
     val credentialId: Int,
     val accountName: String,

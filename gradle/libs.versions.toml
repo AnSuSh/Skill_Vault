@@ -33,6 +33,7 @@ timberLogs = "5.0.1"
 
 # Testing
 coroutinesTest = "1.11.0"
+playServicesCoroutines = "1.11.0"
 espressoCore = "3.7.0"
 junit = "4.13.2"
 androidXJUnit = "1.3.0"
@@ -44,6 +45,7 @@ googleServices = "4.5.0"
 # Core, Kotlin, Coroutines
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "playServicesCoroutines" }
 
 # Compose
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
@@ -77,6 +79,7 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 #firebase-ai = { group = "com.google.firebase", name = "firebase-ai" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+firebase-storage = { group = "com.google.firebase", name = "firebase-firestore" }
 
 # Billing
 billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }

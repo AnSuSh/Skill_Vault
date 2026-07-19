@@ -5,6 +5,7 @@ import androidx.core.content.edit
 import android.view.autofill.AutofillManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.quickthought.skillvault.R
 import com.quickthought.skillvault.data.CredentialRepository
 import com.quickthought.skillvault.ui.list.CredentialListContract.UiEvent
 import com.quickthought.skillvault.ui.list.CredentialListContract.UiEvent.ShowSnackbar
@@ -26,6 +27,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for the [CredentialListScreen].
+ * Manages the UI state, search query, and actions for the credential list.
+ *
+ * @property credentialRepository The repository to fetch and manage credentials.
+ */
 @HiltViewModel
 class CredentialListViewModel @Inject constructor(
     private val credentialRepository: CredentialRepository,
@@ -53,6 +60,11 @@ class CredentialListViewModel @Inject constructor(
         processAction(ViewAction.LoadCredentials)
     }
 
+    /**
+     * Processes actions triggered by the view.
+     *
+     * @param action The action to be processed.
+     */
     fun processAction(action: ViewAction) {
         when (action) {
             is ViewAction.CopyPasswordClicked -> handleCopyPasswordClicked(action.credentialId)
@@ -69,6 +81,11 @@ class CredentialListViewModel @Inject constructor(
     }
 
     // Inside CredentialListViewModel
+    /**
+     * Handles shortcut actions (e.g., from app shortcuts).
+     *
+     * @param action The shortcut action string.
+     */
     fun handleShortcutAction(action: String?) {
         if (action == "add_new") {
             // We trigger the same logic as clicking the FAB
@@ -156,12 +173,20 @@ class CredentialListViewModel @Inject constructor(
         }
     }
 
-    private fun onSearchQueryChanged(query: String) {
+    private    /**
+     * Updates the search query and triggers a reload of credentials.
+     *
+     * @param query The new search query.
+     */
+    fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
         loadCredentials()
     }
 
     @OptIn(FlowPreview::class)
+    /**
+     * Loads credentials from the repository, optionally filtering by search query.
+     */
     private fun loadCredentials() {
         // Collects the Flow from the Repository and updates the UI state reactively
         credentialRepository.getCredentials()
@@ -174,7 +199,7 @@ class CredentialListViewModel @Inject constructor(
                 _uiState.value = UiState.Success(filteredCredentialItems)
             }
             .catch { e ->
-                _uiState.value = UiState.Error("Failed to load credentials: ${e.message}")
+                _uiState.value = UiState.Error(e.message ?: "Unknown error")
             }
             .launchIn(viewModelScope) // Attaches the flow collection to the ViewModel's lifecycle
     }
@@ -192,6 +217,10 @@ class CredentialListViewModel @Inject constructor(
     /**
      * Called by the Activity/Fragment after successful Biometric Authentication.
      */
+    /**
+     * Handles successful biometric authentication.
+     * Reveals the password for the pending credential and copies it to the clipboard.
+     */
     fun handleAuthenticationSuccess() {
         val id = pendingCredentialId ?: return // Should not be null if called correctly
 
@@ -204,10 +233,10 @@ class CredentialListViewModel @Inject constructor(
                 _uiEvent.emit(UiEvent.CopyToClipBoard(password))
 
                 // 3. Notify the user
-                _uiEvent.emit(ShowSnackbar("Password copied to clipboard!"))
+                _uiEvent.emit(UiEvent.ShowSnackbar(messageResId = R.string.password_copied))
 
             } catch (e: Exception) {
-                _uiEvent.emit(ShowSnackbar("Security Error: ${e.message}"))
+                _uiEvent.emit(UiEvent.ShowSnackbar(message = e.message ?: "Unknown error"))
             } finally {
                 // 4. Clear the pending ID immediately
                 pendingCredentialId = null
@@ -215,9 +244,9 @@ class CredentialListViewModel @Inject constructor(
         }
     }
 
-    fun showErrorMessage(message: String = "Authentication failed.") {
+    fun showErrorMessage(message: String) {
         viewModelScope.launch {
-            _uiEvent.emit(ShowSnackbar(message))
+            _uiEvent.emit(UiEvent.ShowSnackbar(message = message))
         }
     }
 }

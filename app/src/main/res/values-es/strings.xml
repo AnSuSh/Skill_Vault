@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bóveda de Contraseñas</string>
+    <string name="add_new">Nueva Credencial</string>
+    <string name="add_new_credential">Agregar Nueva Credencial</string>
+    <string name="button_confirm">Confirmar</string>
+    <string name="button_cancel">Cancelar</string>
+    <string name="delete_password_alert">¿Eliminar Contraseña?</string>
+    <string name="irreversible_action_warning">Esta acción no se puede deshacer.</string>
+    <string name="account_name_hint">Nombre de la cuenta (ej. Google, Banco)</string>
+    <string name="username_email_hint">Usuario / Correo electrónico</string>
+    <string name="password_hint">Contraseña *</string>
+    <string name="hide_password_desc">Ocultar contraseña</string>
+    <string name="show_password_desc">Mostrar contraseña</string>
+    <string name="generate_password_desc">Generar contraseña</string>
+    <string name="delete_text">Eliminar</string>
+    <string name="save_password_alert">¿Guardar Contraseña?</string>
+    <string name="save_password_warning">Esto sobrescribirá una credencial existente con el mismo nombre de cuenta. ¿Estás seguro?</string>
+    <string name="loading_credentials_txt">Cargando credenciales…</string>
+    <string name="no_credentials_found">No se encontraron credenciales.</string>
+    <string name="verify_identity">Verificar Identidad</string>
+    <string name="authenticate_to_reveal_password">Autenticarse para revelar la contraseña</string>
+    <string name="authentication_failed">La autenticación falló.</string>
+    <string name="search_accounts">Buscar cuentas…</string>
+    <string name="clear_search">Limpiar búsqueda</string>
+    <string name="no_credentials_saved_yet">Aún no hay credenciales guardadas.</string>
+    <string name="error">Error: %1$s</string>
+    <string name="password_lab_title">Laboratorio de Contraseñas</string>
+    <string name="search_desc">Buscar</string>
+    <string name="about_us_desc">Sobre Nosotros</string>
+    <string name="back_desc">Volver</string>
+    <string name="delete_caps">ELIMINAR</string>
+    <string name="save_caps">GUARDAR</string>
+    <string name="auth_failed">La autenticación falló.</string>
+    <string name="password_copied">¡Contraseña copiada al portapapeles!</string>
+    <string name="security_error">Error de Seguridad: %1$s</string>
+    <string name="fill_fields_error">Por favor, complete el nombre de la cuenta, el usuario y la contraseña.</string>
+    <string name="update_password_error">Para actualizar, vuelva a ingresar o cambie la contraseña.</string>
+    <string name="save_failed">Error al guardar: %1$s</string>
+    <string name="delete_failed">Error al eliminar: %1$s</string>
+
+    <!-- Feedback -->
+    <string name="feedback_title">Enviar comentarios</string>
+    <string name="feedback_hint">Dinos qué piensas o informa de un problema…</string>
+    <string name="feedback_submit">Enviar</string>
+    <string name="feedback_success">¡Comentarios enviados! Gracias.</string>
+    <string name="feedback_error">Error al enviar comentarios.</string>
+</resources>

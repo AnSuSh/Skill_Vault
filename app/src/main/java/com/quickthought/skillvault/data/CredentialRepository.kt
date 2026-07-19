@@ -11,6 +11,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/**
+ * Repository class that abstracts access to credential data.
+ * Handles encryption and decryption of passwords using [EncryptionService].
+ *
+ * @property credentialDao Data Access Object for credentials.
+ * @property encryptionService Service for encrypting and decrypting data.
+ */
 class CredentialRepository @Inject constructor(
     private val credentialDao: CredentialDAO,
     private val encryptionService: EncryptionService
@@ -19,6 +26,11 @@ class CredentialRepository @Inject constructor(
     /**
      * Retrieves all credentials and maps the database entities to the domain model.
      * Note: The password remains encrypted until explicitly requested for copy/view.
+     */
+    /**
+     * Returns a flow of all credentials, mapped to domain models.
+     *
+     * @return A [Flow] containing a list of [CredentialItemUI].
      */
     fun getCredentials(): Flow<List<CredentialItemUI>> {
         return credentialDao.getAllCredentials().map { entities ->
@@ -29,6 +41,12 @@ class CredentialRepository @Inject constructor(
     /**
      * Saves a new or updated credential.
      * The sensitive password field is encrypted before being passed to the DAO.
+     */
+    /**
+     * Encrypts and saves a credential to the database.
+     *
+     * @param credential The credential domain model to save.
+     * @param plainTextPassword The plaintext password to be encrypted.
      */
     suspend fun saveCredential(credential: CredentialItemUI, plainTextPassword: String) {
         /**
@@ -44,6 +62,11 @@ class CredentialRepository @Inject constructor(
     /**
      * Deletes a credential by its ID.
      */
+    /**
+     * Deletes a credential from the database by its ID.
+     *
+     * @param id The ID of the credential to delete.
+     */
     suspend fun deleteCredential(id: Int) {
         // Since we don't have a direct delete-by-id, we fetch the entity first (or use a dedicated DAO query)
         val entityToDelete = credentialDao.getCredentialById(id)
@@ -51,6 +74,13 @@ class CredentialRepository @Inject constructor(
     }
 
     // In CredentialRepository.kt
+    /**
+     * Fetches a credential by ID and returns its decrypted password.
+     *
+     * @param id The ID of the credential.
+     * @return The decrypted plaintext password.
+     * @throws NoSuchElementException if the credential is not found.
+     */
     suspend fun getDecryptedPassword(id: Int): String = withContext(Dispatchers.IO) {
 
         // 1. Fetch Encrypted Entity: Suspends while Room retrieves the data.

@@ -24,8 +24,8 @@ android {
         applicationId = "com.quickthought.skillvault"
         minSdk = 26
         targetSdk = 37
-        versionCode = 5
-        versionName = "2.0-stable"
+        versionCode = 6
+        versionName = "2.1.0-pasphrase"
 
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
@@ -88,6 +88,7 @@ android {
 dependencies {
 
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.androidx.core.ktx)
 
     implementation(platform(libs.androidx.compose.bom))
@@ -117,6 +118,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.storage)
 
     implementation(libs.androidx.security.crypto)
 
