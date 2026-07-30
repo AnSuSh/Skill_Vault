@@ -2,7 +2,10 @@ package com.quickthought.skillvault.di
 
 import android.content.Context
 import androidx.room.Room
+import com.quickthought.skillvault.data.local.AddressDAO
+import com.quickthought.skillvault.data.local.CreditCardDAO
 import com.quickthought.skillvault.data.local.CredentialDAO
+import com.quickthought.skillvault.data.local.EmailDAO
 import com.quickthought.skillvault.data.local.CredentialDatabase
 import dagger.Module
 import dagger.Provides
@@ -51,5 +54,20 @@ object DatabaseModule {
     @Provides
     fun provideCredentialDao(database: CredentialDatabase): CredentialDAO {
         return database.credentialDao()
+    }
+
+    @Provides
+    fun provideAddressDao(database: CredentialDatabase): AddressDAO {
+        return database.addressDao()
+    }
+
+    @Provides
+    fun provideCreditCardDao(database: CredentialDatabase): CreditCardDAO {
+        return database.creditCardDao()
+    }
+
+    @Provides
+    fun provideEmailDao(database: CredentialDatabase): EmailDAO {
+        return database.emailDao()
     }
 }

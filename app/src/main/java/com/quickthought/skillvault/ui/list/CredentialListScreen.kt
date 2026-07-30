@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
@@ -202,10 +203,8 @@ fun CredentialListScreenContent(
         }
     }
 
-    LaunchedEffect(state) {
-        if (state is UiState.Success) {
-            processAction(ViewAction.CheckAutofillService)
-        }
+    LaunchedEffect(Unit) {
+        processAction(ViewAction.LoadCredentials)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -384,6 +383,9 @@ fun CredentialListScreenContent(
             onDismiss = {
                 showSheet.value = false
                 credentialToEdit.value = null // Clear the model
+            },
+            onSaveSuccess = {
+                processAction(ViewAction.CheckAutofillService)
             },
             initialCredential = credentialToEdit.value
         )

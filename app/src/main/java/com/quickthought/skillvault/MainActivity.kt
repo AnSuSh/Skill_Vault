@@ -33,6 +33,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.quickthought.skillvault.ui.Screen
+import com.quickthought.skillvault.ui.autofill.AutofillScreen
 import com.quickthought.skillvault.ui.generator.PasswordGeneratorScreen
 import com.quickthought.skillvault.ui.list.CredentialListScreen
 import com.quickthought.skillvault.ui.list.CredentialListViewModel
@@ -74,7 +75,7 @@ class MainActivity : FragmentActivity() {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
 
-                val items = listOf(Screen.Vault, Screen.Generator)
+                val items = listOf(Screen.Vault, Screen.Autofill, Screen.Generator)
 
                 Scaffold(
                     bottomBar = {
@@ -129,7 +130,13 @@ class MainActivity : FragmentActivity() {
                             ) + fadeOut(animationSpec = tween(300))
                         }
                     ) {
-                        composable(Screen.Vault.route) { CredentialListScreen(viewModel, onAboutClick = { navController.navigate(Screen.About.route) }) }
+                        composable(Screen.Vault.route) {
+                            CredentialListScreen(
+                                viewModel,
+                                onAboutClick = { navController.navigate(Screen.About.route) }
+                            )
+                        }
+                        composable(Screen.Autofill.route) { AutofillScreen() }
                         composable(Screen.Generator.route) { PasswordGeneratorScreen() }
                         composable(Screen.About.route) { AboutScreen(onBack = { navController.popBackStack() }) }
                     }
@@ -141,6 +148,12 @@ class MainActivity : FragmentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleIntent(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Check autofill status whenever the user returns to the app
+        viewModel.processAction(com.quickthought.skillvault.ui.list.CredentialListContract.ViewAction.CheckAutofillService)
     }
 
     private fun handleIntent(intent: Intent?) {

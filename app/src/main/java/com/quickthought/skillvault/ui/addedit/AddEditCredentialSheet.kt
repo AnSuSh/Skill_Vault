@@ -2,6 +2,7 @@ package com.quickthought.skillvault.ui.addedit
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -62,6 +63,7 @@ import com.quickthought.skillvault.ui.widgets.ConfirmationDialog
 fun AddEditCredentialHost( // This is the new entry point
     onDismiss: () -> Unit,
     initialCredential: CredentialItemUI? = null,
+    onSaveSuccess: () -> Unit = {},
     viewModel: AddEditViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -83,7 +85,12 @@ fun AddEditCredentialHost( // This is the new entry point
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collect { event ->
             when (event) {
-                UiEvent.SaveSuccess, UiEvent.DeleteSuccess -> onDismiss()
+                UiEvent.SaveSuccess -> {
+                    Toast.makeText(context, "Credential saved successfully", Toast.LENGTH_SHORT).show()
+                    onSaveSuccess()
+                    onDismiss()
+                }
+                UiEvent.DeleteSuccess -> onDismiss()
                 is UiEvent.ShowError -> {
                     val message = event.message ?: event.messageResId?.let { context.getString(it) }
                     message?.let { snackbarHostState.showSnackbar(it) }

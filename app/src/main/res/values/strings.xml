@@ -47,9 +47,13 @@
     <string name="feedback_error">Failed to send feedback.</string>
 
     <!-- AutoFIll   -->
-    <string name="autofill_prompt_title">Enable Autofill Service</string>
-    <string name="autofill_prompt_message">To use Password Vault to fill in your passwords in other apps, you need to enable it as your autofill service in system settings.</string>
-    <string name="autofill_prompt_button_settings">Go to Settings</string>
-    <string name="autofill_prompt_button_not_now">Not Now</string>
-    <string name="autofill_prompt_button_manual">I will manage manually!</string>
+    <string name="autofill_prompt_title">Simplify Your Logins</string>
+    <string name="autofill_prompt_message">Enable Skill Vault as your autofill service to securely and effortlessly fill your passwords in other apps and websites.</string>
+    <string name="autofill_prompt_button_settings">Enable in Settings</string>
+    <string name="autofill_prompt_button_not_now">Maybe Later</string>
+    <string name="autofill_prompt_button_manual">Manage Manually</string>
+    <string name="autofill_generate_password">Generate Password: %1$s</string>
+    <string name="autofill_generate_username">Generate Username: %1$s</string>
+    <string name="autofill_save_prompt">Save to Skill Vault?</string>
+    <string name="autofill_save_success">Credential saved to Skill Vault!</string>
 </resources>

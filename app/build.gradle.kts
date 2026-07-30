@@ -121,6 +121,9 @@ dependencies {
     implementation(libs.firebase.storage)
 
     implementation(libs.androidx.security.crypto)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.billing.ktx)
     implementation(libs.konfetti.compose)

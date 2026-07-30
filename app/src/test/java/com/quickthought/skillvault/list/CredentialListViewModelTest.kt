@@ -1,12 +1,15 @@
 package com.quickthought.skillvault.list
 
 import app.cash.turbine.test
+import android.content.SharedPreferences
+import android.view.autofill.AutofillManager
 import com.quickthought.skillvault.data.CredentialRepository
 import com.quickthought.skillvault.domain.model.CredentialItemUI
 import com.quickthought.skillvault.ui.list.CredentialListContract
 import com.quickthought.skillvault.ui.list.CredentialListViewModel
 import com.quickthought.skillvault.util.MainDispatcherRule
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -21,11 +24,15 @@ class CredentialListViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val repository: CredentialRepository = mockk(relaxed = true)
+    private val autofillManager: AutofillManager = mockk(relaxed = true)
+    private val sharedPreferences: SharedPreferences = mockk(relaxed = true)
     private lateinit var viewModel: CredentialListViewModel
 
     @Before
     fun setup() {
-        viewModel = CredentialListViewModel(repository)
+        every { sharedPreferences.getBoolean("never_ask_autofill", false) } returns false
+        every { autofillManager.hasEnabledAutofillServices() } returns true
+        viewModel = CredentialListViewModel(repository, autofillManager, sharedPreferences)
     }
 
     @Test

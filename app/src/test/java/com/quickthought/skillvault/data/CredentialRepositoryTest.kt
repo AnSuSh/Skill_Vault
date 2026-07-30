@@ -1,6 +1,9 @@
 package com.quickthought.skillvault.data
 
+import com.quickthought.skillvault.data.local.AddressDAO
+import com.quickthought.skillvault.data.local.CreditCardDAO
 import com.quickthought.skillvault.data.local.CredentialDAO
+import com.quickthought.skillvault.data.local.EmailDAO
 import com.quickthought.skillvault.di.EncryptionService
 import com.quickthought.skillvault.domain.model.CredentialItemUI
 import io.mockk.coEvery
@@ -13,12 +16,15 @@ import org.junit.Test
 class CredentialRepositoryTest {
 
     private val credentialDao: CredentialDAO = mockk()
+    private val addressDao: AddressDAO = mockk()
+    private val creditCardDao: CreditCardDAO = mockk()
+    private val emailDao: EmailDAO = mockk()
     private val encryptionService: EncryptionService = mockk()
     private lateinit var repository: CredentialRepository
 
     @Before
     fun setup(){
-        repository = CredentialRepository(credentialDao, encryptionService)
+        repository = CredentialRepository(credentialDao, addressDao, creditCardDao, emailDao, encryptionService)
 
 //        mockkStatic(Log::class)
 //        every { Log.i(any(), any()) } returns 0

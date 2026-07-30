@@ -110,10 +110,26 @@ class CredentialListViewModel @Inject constructor(
         if (neverAskAgain) return
 
         val isEnabled = autofillManager?.hasEnabledAutofillServices() ?: false
-        if (!isEnabled && _uiState.value is UiState.Success) {
+        if (isEnabled) {
+            // If it's enabled, make sure the prompt is hidden if it was somehow shown
+            if (_uiState.value is UiState.Success) {
+                _uiState.update { (it as UiState.Success).copy(showAutofillPrompt = false) }
+            }
+            return
+        }
+
+        val lastPromptTime = sharedPreferences.getLong("last_autofill_prompt_time", 0L)
+        val currentTime = System.currentTimeMillis()
+        val cooldownMillis = 24 * 60 * 60 * 1000L // 24 hours cooldown
+
+        if (currentTime - lastPromptTime < cooldownMillis) return
+
+        if (_uiState.value is UiState.Success) {
             _uiState.update {
                 (it as UiState.Success).copy(showAutofillPrompt = true)
             }
+            // Update last prompt time when shown
+            sharedPreferences.edit { putLong("last_autofill_prompt_time", currentTime) }
         }
     }
 

@@ -22,7 +22,7 @@ class PassphraseGenerator(private val context: Context) {
                 }
             }
         } catch (e: Exception) {
-            VaultLogger.errorLog("PassphraseGenerator", "Error loading words from assets", e)
+            VaultLogger.errorLog("Error loading words from assets", e)
         }
         words
     }
